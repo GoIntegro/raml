@@ -10,7 +10,7 @@ namespace GoIntegro\Raml;
 // YAML.
 use Symfony\Component\Yaml\Yaml;
 // JSON.
-use GoIntegro\Hateoas\Util\JsonCoder;
+use GoIntegro\Json\JsonCoder;
 
 class DocParser
 {

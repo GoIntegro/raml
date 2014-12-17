@@ -8,7 +8,7 @@
 namespace GoIntegro\Raml;
 
 // JSON.
-use GoIntegro\Hateoas\Util\JsonCoder;
+use GoIntegro\Json\JsonCoder;
 
 /**
  * Uses JSON-API assumptions to navigate a RAML.

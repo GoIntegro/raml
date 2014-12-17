@@ -47,7 +47,7 @@ SCHEMA;
     {
         /* Given... (Fixture) */
         $jsonCoder = Stub::makeEmpty(
-            'GoIntegro\Hateoas\Util\JsonCoder',
+            'GoIntegro\Json\JsonCoder',
             ['decode' => function($filePath) {
                 if (!is_readable($filePath)) {
                     throw new \ErrorException("The file is not readable.");
@@ -71,7 +71,7 @@ SCHEMA;
     {
         /* Given... (Fixture) */
         $jsonCoder = Stub::makeEmpty(
-            'GoIntegro\Hateoas\Util\JsonCoder',
+            'GoIntegro\Json\JsonCoder',
             [
                 'decode' => function($filePath) {
                     if (!is_readable($filePath)) {
@@ -98,7 +98,7 @@ SCHEMA;
     {
         /* Given... (Fixture) */
         $jsonCoder = Stub::makeEmpty(
-            'GoIntegro\Hateoas\Util\JsonCoder',
+            'GoIntegro\Json\JsonCoder',
             ['decode' => function($filePath) {
                 if (!is_readable($filePath)) {
                     throw new \ErrorException("The file is not readable.");
