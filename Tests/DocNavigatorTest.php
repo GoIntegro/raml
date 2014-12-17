@@ -15,8 +15,8 @@ use Codeception\Util\Stub;
  */
 class DocNavigatorTest extends \PHPUnit_Framework_TestCase
 {
-    const DEFAULT_SCHEMA_RAML = '/../Resources/raml/default-schema.raml',
-        INLINE_BODY_SCHEMA_RAML = '/../Resources/raml/inline-body-schema.raml',
+    const DEFAULT_SCHEMA_RAML = '/Resources/raml/default-schema.raml',
+        INLINE_BODY_SCHEMA_RAML = '/Resources/raml/inline-body-schema.raml',
         TEST_SCHEMA = "This is the schema",
         INLINE_BODY_SCHEMA = <<<'SCHEMA'
 {

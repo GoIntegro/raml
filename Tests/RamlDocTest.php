@@ -14,7 +14,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class RamlDocTest extends \PHPUnit_Framework_TestCase
 {
-    const DEFAULT_SCHEMA_RAML = '/../Resources/raml/default-schema.raml';
+    const DEFAULT_SCHEMA_RAML = '/Resources/raml/default-schema.raml';
 
     public function testCheckingWhetherRequestIsDefined()
     {

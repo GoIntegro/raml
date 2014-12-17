@@ -84,9 +84,9 @@ class DocNavigator
                 );
             } elseif ($this->ramlDoc->hasNamedSchema($schema)) {
                 $schema = $this->ramlDoc->getNamedSchema($schema);
-            } elseif (!$this->jsonCoder->assertJsonSchema($schema)) {
+            }/* elseif (!$this->jsonCoder->assertJsonSchema($schema)) {
                 throw new MalformedSchemaException(self::ERROR_INVALID_SCHEMA);
-            }
+            }*/
 
             return $schema;
         } else {

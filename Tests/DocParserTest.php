@@ -12,7 +12,7 @@ use Codeception\Util\Stub;
 
 class DocParserTest extends \PHPUnit_Framework_TestCase
 {
-    const RAML_PATH = '/../Resources/raml/some-resources.raml',
+    const RAML_PATH = '/Resources/raml/some-resources.raml',
         TEST_SCHEMA = "This is the schema";
 
     public function testParsingRamlDoc()
