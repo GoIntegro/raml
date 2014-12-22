@@ -177,4 +177,20 @@ class RamlDoc
 
         return $raml;
     }
+
+    /**
+     * @return array
+     */
+    public function getResourceNames()
+    {
+        $names = [];
+
+        foreach ($this->rawRaml as $key => $value) {
+            if ($this->isResource($key)) {
+                $names[] = substr($key, 1);
+            }
+        }
+
+        return $names;
+    }
 }
