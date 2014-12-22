@@ -181,16 +181,16 @@ class RamlDoc
     /**
      * @return array
      */
-    public function getResourceNames()
+    public function getResourceTypes()
     {
-        $names = [];
+        $types = [];
 
         foreach ($this->rawRaml as $key => $value) {
             if ($this->isResource($key)) {
-                $names[] = substr($key, 1);
+                $types[] = substr($key, 1);
             }
         }
 
-        return $names;
+        return $types;
     }
 }
