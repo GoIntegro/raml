@@ -51,4 +51,16 @@ class RamlDocTest extends \PHPUnit_Framework_TestCase
             [RamlSpec::HTTP_GET, RamlSpec::HTTP_PUT], $allowedById
         );
     }
+
+    public function testGettingAllResourceTypes()
+    {
+        /* Given... (Fixture) */
+        // Quite justifiable.
+        $rawRaml = Yaml::parse(__DIR__ . self::DEFAULT_SCHEMA_RAML);
+        $ramlDoc = new RamlDoc($rawRaml, self::DEFAULT_SCHEMA_RAML);
+        /* When... (Action) */
+        $types = $ramlDoc->getResourceTypes();
+        /* Then... (Assertions) */
+        $this->assertEquals(['some-resources'], $types);
+    }
 }
