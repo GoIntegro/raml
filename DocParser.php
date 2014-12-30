@@ -45,7 +45,7 @@ class DocParser
         $rawRaml = Yaml::parse($filePath);
         $ramlDoc = new RamlDoc($rawRaml, $filePath);
 
-        $ramlDoc->loadSchemata($rawRaml, $ramlDoc);
+        $this->loadSchemata($rawRaml, $ramlDoc);
 
         $rawRaml = $this->applyTraits($rawRaml);
 
