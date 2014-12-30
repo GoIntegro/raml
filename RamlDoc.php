@@ -22,17 +22,17 @@ class RamlDoc
      */
     public $fileDir;
     /**
-     * @var DocSchemata
+     * @var Root\MapCollection
      */
-    public $docSchemata;
+    public $schemas;
     /**
-     * @var DocResourceTypes
+     * @var Root\MapCollection
      */
-    public $docResourceTypes;
+    public $resourceTypes;
     /**
-     * @var DocTraits
+     * @var Root\MapCollection
      */
-    public $docTraits;
+    public $traits;
 
     /**
      * @param array $rawRaml
@@ -43,9 +43,9 @@ class RamlDoc
         $this->rawRaml = $rawRaml;
         $this->fileName = $fileName;
         $this->fileDir = dirname($fileName);
-        $this->schemata = new DocSchemata;
-        $this->resourceTypes = new DocResourceTypes;
-        $this->traits = new DocTraits;
+        $this->schemata = new Root\MapCollection;
+        $this->resourceTypes = new Root\MapCollection;
+        $this->traits = new Root\MapCollection;
     }
 
     /**

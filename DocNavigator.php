@@ -82,8 +82,8 @@ class DocNavigator
                 $schema = $this->dereferenceInclude(
                     $schema, $this->ramlDoc->fileDir
                 );
-            } elseif ($this->ramlDoc->schemata->hasNamedSchema($schema)) {
-                $schema = $this->ramlDoc->schemata->getNamedSchema($schema);
+            } elseif ($this->ramlDoc->schemas->has($schema)) {
+                $schema = $this->ramlDoc->schemas->get($schema);
             }/* elseif (!$this->jsonCoder->assertJsonSchema($schema)) {
                 throw new MalformedSchemaException(self::ERROR_INVALID_SCHEMA);
             }*/
@@ -92,7 +92,7 @@ class DocNavigator
         } else {
             list($resourceType) = explode('/', substr($resourceUri, 1));
 
-            return $this->ramlDoc->schemata->getNamedSchema($resourceType);
+            return $this->ramlDoc->schemas->get($resourceType);
         }
     }
 

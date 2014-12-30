@@ -19,7 +19,7 @@ class DocParserTest extends \PHPUnit_Framework_TestCase
     {
         /* Given... (Fixture) */
         $jsonCoder = Stub::makeEmpty(
-            'GoIntegro\Json\JsonCoder',
+            'GoIntegro\\Json\\JsonCoder',
             ['decode' => function($filePath) {
                 if (!is_readable($filePath)) {
                     throw new \ErrorException("The file is not readable.");
@@ -28,7 +28,10 @@ class DocParserTest extends \PHPUnit_Framework_TestCase
                 return self::TEST_SCHEMA;
             }]
         );
-        $parser = new DocParser($jsonCoder);
+        $mapCollectionParser = Stub::makeEmpty(
+            'GoIntegro\\Raml\\MapCollectionParser'
+        );
+        $parser = new DocParser($jsonCoder, $mapCollectionParser);
         /* When... (Action) */
         $ramlDoc = $parser->parse(__DIR__ . self::RAML_PATH);
         /* Then... (Assertions) */

@@ -56,7 +56,10 @@ SCHEMA;
                 return self::TEST_SCHEMA;
             }]
         );
-        $parser = new DocParser($jsonCoder);
+        $mapCollectionParser = Stub::makeEmpty(
+            'GoIntegro\\Raml\\MapCollectionParser'
+        );
+        $parser = new DocParser($jsonCoder, $mapCollectionParser);
         $ramlDoc = $parser->parse(__DIR__ . self::DEFAULT_SCHEMA_RAML);
         $navigator = new DocNavigator($ramlDoc, $jsonCoder);
         /* When... (Action) */
@@ -83,7 +86,10 @@ SCHEMA;
                 'assertJsonSchema' => function($json) { return TRUE; }
             ]
         );
-        $parser = new DocParser($jsonCoder);
+        $mapCollectionParser = Stub::makeEmpty(
+            'GoIntegro\\Raml\\MapCollectionParser'
+        );
+        $parser = new DocParser($jsonCoder, $mapCollectionParser);
         $ramlDoc = $parser->parse(__DIR__ . self::INLINE_BODY_SCHEMA_RAML);
         $navigator = new DocNavigator($ramlDoc, $jsonCoder);
         /* When... (Action) */
@@ -107,7 +113,10 @@ SCHEMA;
                 return self::TEST_SCHEMA;
             }]
         );
-        $parser = new DocParser($jsonCoder);
+        $mapCollectionParser = Stub::makeEmpty(
+            'GoIntegro\\Raml\\MapCollectionParser'
+        );
+        $parser = new DocParser($jsonCoder, $mapCollectionParser);
         $ramlDoc = $parser->parse(__DIR__ . self::DEFAULT_SCHEMA_RAML);
         $navigator = new DocNavigator($ramlDoc, $jsonCoder);
         /* When... (Action) */

@@ -17,23 +17,29 @@ class DocParser
     use DereferencesIncludes;
 
     const ERROR_ROOT_SCHEMA_VALUE = "The root section \"schemas\" have an unsupported item.",
-        ERROR_UNEXPECTED_VALUE = "An unexpected value was found when parsing the RAML.";
+        ERROR_UNEXPECTED_VALUE = "An unexpected value was found when parsing the RAML.",
+        ERROR_INCLUDED_FILE_TYPE = "The included file path is neither JSON nor YAML.";
 
     /**
      * @var JsonCoder
      */
     private $jsonCoder;
     /**
-     * @var string
+     * @var MapCollectionParser
      */
-    private $fileDir;
+    private $mapCollectionParser;
 
     /**
      * @param JsonCoder $jsonCoder
+     * @param MapCollectionParser $mapCollectionParser
      */
-    public function __construct(JsonCoder $jsonCoder)
+    public function __construct(
+        JsonCoder $jsonCoder,
+        MapCollectionParser $mapCollectionParser
+    )
     {
         $this->jsonCoder = $jsonCoder;
+        $this->mapCollectionParser = $mapCollectionParser;
     }
 
     /**
@@ -45,36 +51,15 @@ class DocParser
         $rawRaml = Yaml::parse($filePath);
         $ramlDoc = new RamlDoc($rawRaml, $filePath);
 
-        $this->loadSchemata($rawRaml, $ramlDoc);
-
-        $rawRaml = $this->applyTraits($rawRaml);
-
-        return $ramlDoc;
-    }
-
-    /**
-     * @param array $rawRaml
-     * @param RamlDoc $ramlDoc
-     * @return self
-     * @throws \ErrorException
-     */
-    protected function loadSchemata(array $rawRaml, RamlDoc $ramlDoc)
-    {
-        if (isset($rawRaml['schemas'])) {
-            foreach ($rawRaml['schemas'] as $map) {
-                if (is_array($map)) {
-                    // @todo This might be a schema literal. Distinguish (?)
-                    $this->dereferenceIncludes($map, $ramlDoc->fileDir);
-                    $ramlDoc->schemata->addSchemaMap($map);
-                } elseif (is_string($map)) {
-                    // @todo Should be an included map (hash).
-                } else {
-                    throw new \ErrorException(self::ERROR_ROOT_SCHEMA_VALUE);
-                }
+        foreach (['schemas', 'resourceTypes', 'traits'] as $key) {
+            if (isset($rawRaml[$key])) {
+                $ramlDoc->$key = $this->mapCollectionParser->parse(
+                    $rawRaml[$key], $ramlDoc
+                );
             }
         }
 
-        return $this;
+        return $ramlDoc;
     }
 
     /**

@@ -7,6 +7,9 @@
 
 namespace GoIntegro\Raml;
 
+// YAML.
+use Symfony\Component\Yaml\Yaml;
+
 /**
  * A class that has this trait dereferences includes.
  *
@@ -29,7 +32,7 @@ trait DereferencesIncludes
                     $value = $this->dereferenceInclude($value, $fileDir);
                 }
             } else {
-                throw new \ErrorException(self::ERROR_UNEXPECTED_VALUE);
+                throw new \ErrorException(DocParser::ERROR_UNEXPECTED_VALUE);
             }
         }
     }
@@ -44,6 +47,30 @@ trait DereferencesIncludes
     {
         $filePath = $fileDir . preg_replace('/^!include +/', '/', $value);
 
-        return $this->jsonCoder->decode($filePath, TRUE);
+        if ($this->isJsonFile($filePath)) {
+            return $this->jsonCoder->decode($filePath, TRUE);
+        } elseif ($this->isYamlFile($filePath)) {
+            return Yaml::parse($filePath);
+        } else {
+            throw new \ErrorException(DocParser::ERROR_INCLUDED_FILE_TYPE);
+        }
+    }
+
+    /**
+     * @param string $path
+     * @return boolean
+     */
+    protected function isJsonFile($path)
+    {
+        return 1 === preg_match('/\.json$/', $path);
+    }
+
+    /**
+     * @param string $path
+     * @return boolean
+     */
+    protected function isYamlFile($path)
+    {
+        return 1 === preg_match('/\.(y|ra|ya)ml$/', $path);
     }
 }

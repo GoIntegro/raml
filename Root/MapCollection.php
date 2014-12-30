@@ -30,9 +30,7 @@ class MapCollection implements \Countable, \IteratorAggregate
     public function has($name)
     {
         foreach ($this->maps as $map) {
-            foreach ($map as $key => $schema) {
-                if ($key === $name) return TRUE;
-            }
+            if ($map->has($name)) return TRUE;
         }
 
         return FALSE;
@@ -45,9 +43,7 @@ class MapCollection implements \Countable, \IteratorAggregate
     public function get($name)
     {
         foreach ($this->maps as $map) {
-            foreach ($map as $key => $schema) {
-                if ($key === $name) return $schema;
-            }
+            if ($map->has($name)) return $map->get($name);
         }
 
         return NULL;
