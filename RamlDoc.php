@@ -152,6 +152,7 @@ class RamlDoc
 
     /**
      * @return array
+     * @see http://raml.org/spec.html#resources-and-nested-resources
      */
     public function getResources()
     {
