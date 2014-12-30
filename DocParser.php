@@ -45,11 +45,26 @@ class DocParser
         $rawRaml = Yaml::parse($filePath);
         $ramlDoc = new RamlDoc($rawRaml, $filePath);
 
+        $ramlDoc->loadSchemata($rawRaml, $ramlDoc);
+
+        $rawRaml = $this->applyTraits($rawRaml);
+
+        return $ramlDoc;
+    }
+
+    /**
+     * @param array $rawRaml
+     * @param RamlDoc $ramlDoc
+     * @return self
+     * @throws \ErrorException
+     */
+    protected function loadSchemata(array $rawRaml, RamlDoc $ramlDoc)
+    {
         if (isset($rawRaml['schemas'])) {
             foreach ($rawRaml['schemas'] as $map) {
                 if (is_array($map)) {
                     $this->dereferenceIncludes($map, $ramlDoc->fileDir);
-                    $ramlDoc->addSchemaMap($map);
+                    $ramlDoc->schemata->addSchemaMap($map);
                 } elseif (is_string($map)) {
                     // @todo Finish.
                 } else {
@@ -58,6 +73,26 @@ class DocParser
             }
         }
 
-        return $ramlDoc;
+        return $this;
+    }
+
+    /**
+     * @param array $rawRaml
+     * @return array
+     * @see http://raml.org/spec.html#resource-types-and-traits
+     */
+    protected function applyResourceTypes(array $rawRaml)
+    {
+        // @todo Recursive.
+    }
+
+    /**
+     * @param array $rawRaml
+     * @return array
+     * @see http://raml.org/spec.html#resource-types-and-traits
+     */
+    protected function applyTraits(array $rawRaml)
+    {
+        // @todo Recursive.
     }
 }

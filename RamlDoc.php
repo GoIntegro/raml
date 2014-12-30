@@ -22,9 +22,17 @@ class RamlDoc
      */
     public $fileDir;
     /**
-     * @var array
+     * @var Doc\DocSchemata
      */
-    private $schemaMaps = [];
+    public $docSchemata;
+    /**
+     * @var Doc\DocResourceTypes
+     */
+    public $docResourceTypes;
+    /**
+     * @var Doc\DocTraits
+     */
+    public $docTraits;
 
     /**
      * @param array $rawRaml
@@ -35,45 +43,9 @@ class RamlDoc
         $this->rawRaml = $rawRaml;
         $this->fileName = $fileName;
         $this->fileDir = dirname($fileName);
-    }
-
-    /**
-     * @param array $map
-     * @return self
-     */
-    public function addSchemaMap(array $map)
-    {
-        $this->schemaMaps[] = $map;
-    }
-
-    /**
-     * @param string $name
-     * @return \stdClass|NULL
-     */
-    public function hasNamedSchema($name)
-    {
-        foreach ($this->schemaMaps as $map) {
-            foreach ($map as $key => $schema) {
-                if ($key === $name) return TRUE;
-            }
-        }
-
-        return FALSE;
-    }
-
-    /**
-     * @param string $name
-     * @return \stdClass|NULL
-     */
-    public function getNamedSchema($name)
-    {
-        foreach ($this->schemaMaps as $map) {
-            foreach ($map as $key => $schema) {
-                if ($key === $name) return $schema;
-            }
-        }
-
-        return NULL;
+        $this->schemata = new Doc\DocSchemata;
+        $this->resourceTypes = new Doc\DocResourceTypes;
+        $this->traits = new Doc\DocTraits;
     }
 
     /**
@@ -181,7 +153,7 @@ class RamlDoc
     /**
      * @return array
      */
-    public function getResourceTypes()
+    public function getResources()
     {
         $types = [];
 
