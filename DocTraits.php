@@ -7,7 +7,9 @@
 
 namespace GoIntegro\Raml;
 
+/**
+ * @see http://raml.org/spec.html#resource-types-and-traits
+ */
 class DocTraits
 {
-
 }

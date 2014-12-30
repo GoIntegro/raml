@@ -7,6 +7,9 @@
 
 namespace GoIntegro\Raml;
 
+/**
+ * @see http://raml.org/spec.html#schemas
+ */
 class DocSchemata
 {
     /**

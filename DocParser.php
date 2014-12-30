@@ -63,10 +63,11 @@ class DocParser
         if (isset($rawRaml['schemas'])) {
             foreach ($rawRaml['schemas'] as $map) {
                 if (is_array($map)) {
+                    // @todo This might be a schema literal. Distinguish (?)
                     $this->dereferenceIncludes($map, $ramlDoc->fileDir);
                     $ramlDoc->schemata->addSchemaMap($map);
                 } elseif (is_string($map)) {
-                    // @todo Finish.
+                    // @todo Should be an included map (hash).
                 } else {
                     throw new \ErrorException(self::ERROR_ROOT_SCHEMA_VALUE);
                 }
