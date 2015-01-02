@@ -24,10 +24,10 @@ class Map implements \Countable, \IteratorAggregate
 
     /**
      * @param string $key
-     * @param array $item
+     * @param array|\stdClass $item
      * @return self
      */
-    public function add($key, array $item)
+    public function add($key, $item)
     {
         $this->items[$key] = $item;
     }
