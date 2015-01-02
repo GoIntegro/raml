@@ -49,9 +49,9 @@ class MapCollectionParser
 
         foreach ($raw as $map) {
             if (is_array($map)) {
-                $this->dereferenceIncludes($map, $ramlDoc->fileDir);
-            } elseif (is_string($map) && RamlDoc::isInclude($value)) {
-                $this->dereferenceInclude($map, $ramlDoc->fileDir);
+                $map = $this->dereferenceIncludes($map, $ramlDoc->fileDir);
+            } elseif (is_string($map) && RamlDoc::isInclude($map)) {
+                $map = $this->dereferenceInclude($map, $ramlDoc->fileDir);
             } else {
                 throw new \ErrorException(self::ERROR_ROOT_SCHEMA_VALUE);
             }
@@ -60,5 +60,27 @@ class MapCollectionParser
         }
 
         return $collection;
+    }
+
+    /**
+     * @param array &$map
+     * @param string $fileDir
+     * @return array
+     */
+    protected function dereferenceIncludes(array &$map, $fileDir = __DIR__)
+    {
+        foreach ($map as $key => &$value) {
+            if (is_string($value)) {
+                if (RamlDoc::isInclude($value)) {
+                    $value = $this->dereferenceInclude($value, $fileDir);
+                }
+            } else {
+                // throw new \ErrorException(
+                //     self::ERROR_UNEXPECTED_VALUE
+                // );
+            }
+        }
+
+        return $map;
     }
 }

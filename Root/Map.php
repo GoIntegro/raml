@@ -7,7 +7,7 @@
 
 namespace GoIntegro\Raml\Root;
 
-abstract class Map implements \Countable, \IteratorAggregate
+class Map implements \Countable, \IteratorAggregate
 {
     /**
      * @var array
@@ -15,12 +15,21 @@ abstract class Map implements \Countable, \IteratorAggregate
     private $items = [];
 
     /**
+     * @param array $map
+     */
+    public function __construct(array $map)
+    {
+        foreach ($map as $key => $item) $this->add($key, $item);
+    }
+
+    /**
+     * @param string $key
      * @param array $item
      * @return self
      */
-    public function add(array $item)
+    public function add($key, array $item)
     {
-        $this->items[] = $item;
+        $this->items[$key] = $item;
     }
 
     /**

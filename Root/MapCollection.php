@@ -18,9 +18,9 @@ class MapCollection implements \Countable, \IteratorAggregate
      * @param array $map
      * @return self
      */
-    public function add(Map $map)
+    public function add(array $map)
     {
-        $this->maps[] = $map;
+        $this->maps[] = new Map($map);
     }
 
     /**

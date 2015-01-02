@@ -20,15 +20,32 @@ class MapCollectionParserTest extends \PHPUnit_Framework_TestCase
     {
         /* Given... (Fixture) */
         $jsonCoder = Stub::makeEmpty('GoIntegro\\Json\\JsonCoder');
+        $path = __DIR__ . self::RAML_PATH;
         $ramlDoc = Stub::makeEmpty(
             'GoIntegro\\Raml\\RamlDoc',
-            [
-                'rawRaml' => Yaml::parse(__DIR__ . self::RAML_PATH)
-            ]
+            ['fileDir' => dirname($path), 'rawRaml' => Yaml::parse($path)]
         );
+        $raw = [
+            '!include some-traits.yml',
+            ['secured' => '!include some-trait.yml'],
+            [
+                'paged' => [
+                    'queryParameters' => [
+                        'start' => ['type' => 'number']
+                    ]
+                ]
+            ],
+            [
+                'searchable' => [
+                    'queryParameters' => [
+                        'query' => ['type' => 'string']
+                    ]
+                ]
+            ]
+        ];
         $parser = new MapCollectionParser($jsonCoder);
         /* When... (Action) */
-        $mapCollection = $parser->parse([], $ramlDoc);
+        $mapCollection = $parser->parse($raw, $ramlDoc);
         /* Then... (Assertions) */
         $this->assertInstanceOf(
             'GoIntegro\\Raml\\Root\\MapCollection', $mapCollection
