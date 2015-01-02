@@ -38,14 +38,22 @@ class MapCollectionParser
     }
 
     /**
-     * @param array $rawRaml
+     * @param mixed $rawRaml
      * @param RamlDoc $ramlDoc
      * @return self
      * @throws \ErrorException
      */
-    public function parse(array $raw, RamlDoc $ramlDoc)
+    public function parse($raw, RamlDoc $ramlDoc)
     {
         $collection = new Root\MapCollection;
+
+        if (is_string($raw)) {
+            if (RamlDoc::isInclude($raw)) {
+                $raw = $this->dereferenceInclude($raw, $ramlDoc->fileDir);
+            } else {
+                throw new \ErrorException(self::ERROR_ROOT_SCHEMA_VALUE);
+            }
+        }
 
         foreach ($raw as $map) {
             if (is_array($map)) {

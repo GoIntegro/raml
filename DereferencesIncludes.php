@@ -33,7 +33,7 @@ trait DereferencesIncludes
                 DocNavigator::ERROR_INCLUDED_FILE_PERMISSION
             );
         } elseif ($this->isJsonFile($filePath)) {
-            return $this->jsonCoder->decode($filePath, TRUE);
+            return $this->jsonCoder->decode($filePath);
         } elseif ($this->isYamlFile($filePath)) {
             return Yaml::parse($filePath);
         } else {
