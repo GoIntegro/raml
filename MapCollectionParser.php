@@ -69,7 +69,7 @@ class MapCollectionParser
      */
     protected function dereferenceIncludes(array &$map, $fileDir = __DIR__)
     {
-        foreach ($map as $key => &$value) {
+        foreach ($map as &$value) {
             if (is_string($value)) {
                 if (RamlDoc::isInclude($value)) {
                     $value = $this->dereferenceInclude($value, $fileDir);
