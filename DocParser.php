@@ -46,6 +46,62 @@ class DocParser
             }
         }
 
+        // @todo Resource types. Encapsulate.
+        foreach ($ramlDoc->getResources() as $resource) {
+            $key = '/' . $resource;
+
+            if (!empty($rawRaml[$key]['type'])) {
+                $typeName = $rawRaml[$key]['type'];
+
+                if ($ramlDoc->resourceTypes->has($typeName)) {
+                    $typeRaml = $ramlDoc->resourceTypes->get($typeName);
+                    $rawRaml[$key] = array_merge_recursive(
+                        $rawRaml[$key], $typeRaml
+                    );
+                } else {
+                    // @todo Exception.
+                }
+            }
+        }
+
+        // @todo Traits for resources. Encapsulate.
+        foreach ($ramlDoc->getResources() as $resource) {
+            $key = '/' . $resource;
+
+            if (!empty($rawRaml[$key]['is'])) {
+                foreach ($rawRaml[$key]['is'] as $traitName) {
+                    if ($ramlDoc->traits->has($traitName)) {
+                        $traitRaml = $ramlDoc->traits->get($traitName);
+                        $rawRaml[$key] = array_merge_recursive(
+                            $rawRaml[$key], $traitRaml
+                        );
+                    } else {
+                        // @todo Exception.
+                    }
+                }
+            }
+
+            // @todo Traits for methods. Encapsulate.
+            foreach (array_keys($rawRaml[$key]) as $property) {
+                if (
+                    RamlDoc::isValidMethod($property)
+                    && !empty($rawRaml[$key][$property]['is'])
+                ) {
+                    foreach ($rawRaml[$key][$property]['is'] as $traitName) {
+                        if ($ramlDoc->traits->has($traitName)) {
+                            $traitRaml = $ramlDoc->traits->get($traitName);
+
+                            $rawRaml[$key][$property] = array_merge_recursive(
+                                $rawRaml[$key][$property], $traitRaml
+                            );
+                        } else {
+                            // @todo Exception.
+                        }
+                    }
+                }
+            }
+        }
+
         return $ramlDoc;
     }
 
