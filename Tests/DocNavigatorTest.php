@@ -43,63 +43,6 @@ class DocNavigatorTest extends \PHPUnit_Framework_TestCase
 }
 SCHEMA;
 
-    public function testFindingDefaultSchema()
-    {
-        /* Given... (Fixture) */
-        $jsonCoder = Stub::makeEmpty(
-            'GoIntegro\Json\JsonCoder',
-            ['decode' => function($filePath) {
-                if (!is_readable($filePath)) {
-                    throw new \ErrorException("The file is not readable.");
-                }
-
-                return self::TEST_SCHEMA;
-            }]
-        );
-        $mapCollectionParser = Stub::makeEmpty(
-            'GoIntegro\\Raml\\MapCollectionParser'
-        );
-        $parser = new DocParser($jsonCoder, $mapCollectionParser);
-        $ramlDoc = $parser->parse(__DIR__ . self::DEFAULT_SCHEMA_RAML);
-        $navigator = new DocNavigator($ramlDoc, $jsonCoder);
-        /* When... (Action) */
-        $schema = $navigator->findRequestSchema(
-            RamlSpec::HTTP_POST, '/some-resources'
-        );
-        /* Then... (Assertions) */
-        $this->assertEquals(self::TEST_SCHEMA, $schema);
-    }
-
-    public function testFindingInlineBodySchema()
-    {
-        /* Given... (Fixture) */
-        $jsonCoder = Stub::makeEmpty(
-            'GoIntegro\Json\JsonCoder',
-            [
-                'decode' => function($filePath) {
-                    if (!is_readable($filePath)) {
-                        throw new \ErrorException("The file is not readable.");
-                    }
-
-                    return self::TEST_SCHEMA;
-                },
-                'assertJsonSchema' => function($json) { return TRUE; }
-            ]
-        );
-        $mapCollectionParser = Stub::makeEmpty(
-            'GoIntegro\\Raml\\MapCollectionParser'
-        );
-        $parser = new DocParser($jsonCoder, $mapCollectionParser);
-        $ramlDoc = $parser->parse(__DIR__ . self::INLINE_BODY_SCHEMA_RAML);
-        $navigator = new DocNavigator($ramlDoc, $jsonCoder);
-        /* When... (Action) */
-        $schema = $navigator->findRequestSchema(
-            RamlSpec::HTTP_POST, '/some-resources'
-        );
-        /* Then... (Assertions) */
-        $this->assertEquals(self::INLINE_BODY_SCHEMA, $schema);
-    }
-
     public function testNavigatingARaml()
     {
         /* Given... (Fixture) */
@@ -113,11 +56,14 @@ SCHEMA;
                 return self::TEST_SCHEMA;
             }]
         );
-        $mapCollectionParser = Stub::makeEmpty(
-            'GoIntegro\\Raml\\MapCollectionParser'
+        $ramlDoc = Stub::makeEmpty(
+            'GoIntegro\\Raml\\RamlDoc',
+            [
+                'schemas' => Stub::makeEmpty(
+                    'GoIntegro\\Raml\\Root\\MapCollection'
+                )
+            ]
         );
-        $parser = new DocParser($jsonCoder, $mapCollectionParser);
-        $ramlDoc = $parser->parse(__DIR__ . self::DEFAULT_SCHEMA_RAML);
         $navigator = new DocNavigator($ramlDoc, $jsonCoder);
         /* When... (Action) */
         $filteredResponses = $navigator->navigate(
@@ -139,5 +85,74 @@ SCHEMA;
             'description' => "Updates one or more resources.",
             'responses' => [200 => NULL, 404 => NULL]
         ], $withParamResponses);
+    }
+
+    /**
+     * @depends testNavigatingARaml
+     */
+    public function testFindingDefaultSchema()
+    {
+        /* Given... (Fixture) */
+        $jsonCoder = Stub::makeEmpty(
+            'GoIntegro\Json\JsonCoder',
+            ['decode' => function($filePath) {
+                if (!is_readable($filePath)) {
+                    throw new \ErrorException("The file is not readable.");
+                }
+
+                return self::TEST_SCHEMA;
+            }]
+        );
+        $ramlDoc = Stub::makeEmpty(
+            'GoIntegro\\Raml\\RamlDoc',
+            [
+                'schemas' => Stub::makeEmpty(
+                    'GoIntegro\\Raml\\Root\\MapCollection'
+                )
+            ]
+        );
+        $navigator = new DocNavigator($ramlDoc, $jsonCoder);
+        /* When... (Action) */
+        $schema = $navigator->findRequestSchema(
+            RamlSpec::HTTP_POST, '/some-resources'
+        );
+        /* Then... (Assertions) */
+        $this->assertEquals(self::TEST_SCHEMA, $schema);
+    }
+
+    /**
+     * @depends testNavigatingARaml
+     */
+    public function testFindingInlineBodySchema()
+    {
+        /* Given... (Fixture) */
+        $jsonCoder = Stub::makeEmpty(
+            'GoIntegro\Json\JsonCoder',
+            [
+                'decode' => function($filePath) {
+                    if (!is_readable($filePath)) {
+                        throw new \ErrorException("The file is not readable.");
+                    }
+
+                    return self::TEST_SCHEMA;
+                },
+                'assertJsonSchema' => function($json) { return TRUE; }
+            ]
+        );
+        $ramlDoc = Stub::makeEmpty(
+            'GoIntegro\\Raml\\RamlDoc',
+            [
+                'schemas' => Stub::makeEmpty(
+                    'GoIntegro\\Raml\\Root\\MapCollection'
+                )
+            ]
+        );
+        $navigator = new DocNavigator($ramlDoc, $jsonCoder);
+        /* When... (Action) */
+        $schema = $navigator->findRequestSchema(
+            RamlSpec::HTTP_POST, '/some-resources'
+        );
+        /* Then... (Assertions) */
+        $this->assertEquals(self::INLINE_BODY_SCHEMA, $schema);
     }
 }

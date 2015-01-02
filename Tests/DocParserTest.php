@@ -18,20 +18,10 @@ class DocParserTest extends \PHPUnit_Framework_TestCase
     public function testParsingRamlDoc()
     {
         /* Given... (Fixture) */
-        $jsonCoder = Stub::makeEmpty(
-            'GoIntegro\\Json\\JsonCoder',
-            ['decode' => function($filePath) {
-                if (!is_readable($filePath)) {
-                    throw new \ErrorException("The file is not readable.");
-                }
-
-                return self::TEST_SCHEMA;
-            }]
-        );
         $mapCollectionParser = Stub::makeEmpty(
             'GoIntegro\\Raml\\MapCollectionParser'
         );
-        $parser = new DocParser($jsonCoder, $mapCollectionParser);
+        $parser = new DocParser($mapCollectionParser);
         /* When... (Action) */
         $ramlDoc = $parser->parse(__DIR__ . self::RAML_PATH);
         /* Then... (Assertions) */

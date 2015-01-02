@@ -14,31 +14,18 @@ use GoIntegro\Json\JsonCoder;
 
 class DocParser
 {
-    use DereferencesIncludes;
+    const ERROR_ROOT_SCHEMA_VALUE = "The root section \"schemas\" have an unsupported item.";
 
-    const ERROR_ROOT_SCHEMA_VALUE = "The root section \"schemas\" have an unsupported item.",
-        ERROR_UNEXPECTED_VALUE = "An unexpected value was found when parsing the RAML.",
-        ERROR_INCLUDED_FILE_TYPE = "The included file path is neither JSON nor YAML.";
-
-    /**
-     * @var JsonCoder
-     */
-    private $jsonCoder;
     /**
      * @var MapCollectionParser
      */
     private $mapCollectionParser;
 
     /**
-     * @param JsonCoder $jsonCoder
      * @param MapCollectionParser $mapCollectionParser
      */
-    public function __construct(
-        JsonCoder $jsonCoder,
-        MapCollectionParser $mapCollectionParser
-    )
+    public function __construct(MapCollectionParser $mapCollectionParser)
     {
-        $this->jsonCoder = $jsonCoder;
         $this->mapCollectionParser = $mapCollectionParser;
     }
 

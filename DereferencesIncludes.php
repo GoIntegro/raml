@@ -32,7 +32,7 @@ trait DereferencesIncludes
                     $value = $this->dereferenceInclude($value, $fileDir);
                 }
             } else {
-                throw new \ErrorException(DocParser::ERROR_UNEXPECTED_VALUE);
+                throw new \ErrorException(DocNavigator::ERROR_UNEXPECTED_VALUE);
             }
         }
     }
@@ -52,7 +52,7 @@ trait DereferencesIncludes
         } elseif ($this->isYamlFile($filePath)) {
             return Yaml::parse($filePath);
         } else {
-            throw new \ErrorException(DocParser::ERROR_INCLUDED_FILE_TYPE);
+            throw new \ErrorException(DocNavigator::ERROR_INCLUDED_FILE_TYPE);
         }
     }
 

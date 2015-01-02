@@ -22,7 +22,9 @@ class DocNavigator
         ERROR_INVALID_SCHEMA = "The provided schema is not valid.",
         ERROR_INVALID_KEY = "One of the keys provided to navigate the RAML is not valid.",
         ERROR_KEY_NOT_FOUND = "A path for one of the keys provided \"%s\" was not found.",
-        ERROR_PARAM_NOT_FOUND = "One of the keys provided \"%s\" was assumed to be an Id or list of Ids, but a matching path was not found.";
+        ERROR_PARAM_NOT_FOUND = "One of the keys provided \"%s\" was assumed to be an Id or list of Ids, but a matching path was not found.",
+        ERROR_UNEXPECTED_VALUE = "An unexpected value was found when parsing the RAML.",
+        ERROR_INCLUDED_FILE_TYPE = "The included file path is neither JSON nor YAML.";
 
     /**
      * @var RamlDoc
