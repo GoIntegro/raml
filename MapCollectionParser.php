@@ -73,11 +73,11 @@ class MapCollectionParser
             if (is_string($value)) {
                 if (RamlDoc::isInclude($value)) {
                     $value = $this->dereferenceInclude($value, $fileDir);
+                } else {
+                    throw new \ErrorException(
+                        self::ERROR_UNEXPECTED_VALUE
+                    );
                 }
-            } else {
-                // throw new \ErrorException(
-                //     self::ERROR_UNEXPECTED_VALUE
-                // );
             }
         }
 
