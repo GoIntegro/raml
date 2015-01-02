@@ -12,8 +12,7 @@ use Codeception\Util\Stub;
 
 class DocParserTest extends \PHPUnit_Framework_TestCase
 {
-    const RAML_PATH = '/Resources/raml/some-resources.raml',
-        TEST_SCHEMA = "This is the schema";
+    const RAML_PATH = '/Resources/raml/some-resources.raml';
 
     public function testParsingRamlDoc()
     {
@@ -26,7 +25,7 @@ class DocParserTest extends \PHPUnit_Framework_TestCase
         $ramlDoc = $parser->parse(__DIR__ . self::RAML_PATH);
         /* Then... (Assertions) */
         $this->assertInstanceOf(
-            'GoIntegro\Raml\RamlDoc', $ramlDoc
+            'GoIntegro\\Raml\\RamlDoc', $ramlDoc
         );
     }
 }
