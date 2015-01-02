@@ -9,6 +9,8 @@ namespace GoIntegro\Raml;
 
 // Mocks.
 use Codeception\Util\Stub;
+// YAML.
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * @todo Depends on the DocParserTest.
@@ -16,8 +18,8 @@ use Codeception\Util\Stub;
 class DocNavigatorTest extends \PHPUnit_Framework_TestCase
 {
     const DEFAULT_SCHEMA_RAML = '/Resources/raml/default-schema.raml',
-        INLINE_BODY_SCHEMA_RAML = '/Resources/raml/inline-body-schema.raml',
         TEST_SCHEMA = "This is the schema",
+        INLINE_BODY_SCHEMA_RAML = '/Resources/raml/inline-body-schema.raml',
         INLINE_BODY_SCHEMA = <<<'SCHEMA'
 {
   "$schema": "http://json-schema.org/schema",
@@ -46,19 +48,11 @@ SCHEMA;
     public function testNavigatingARaml()
     {
         /* Given... (Fixture) */
-        $jsonCoder = Stub::makeEmpty(
-            'GoIntegro\Json\JsonCoder',
-            ['decode' => function($filePath) {
-                if (!is_readable($filePath)) {
-                    throw new \ErrorException("The file is not readable.");
-                }
-
-                return self::TEST_SCHEMA;
-            }]
-        );
+        $jsonCoder = Stub::makeEmpty('GoIntegro\\Json\\JsonCoder');
         $ramlDoc = Stub::makeEmpty(
             'GoIntegro\\Raml\\RamlDoc',
             [
+                'rawRaml' => Yaml::parse(__DIR__ . self::DEFAULT_SCHEMA_RAML),
                 'schemas' => Stub::makeEmpty(
                     'GoIntegro\\Raml\\Root\\MapCollection'
                 )
@@ -93,21 +87,14 @@ SCHEMA;
     public function testFindingDefaultSchema()
     {
         /* Given... (Fixture) */
-        $jsonCoder = Stub::makeEmpty(
-            'GoIntegro\Json\JsonCoder',
-            ['decode' => function($filePath) {
-                if (!is_readable($filePath)) {
-                    throw new \ErrorException("The file is not readable.");
-                }
-
-                return self::TEST_SCHEMA;
-            }]
-        );
+        $jsonCoder = Stub::makeEmpty('GoIntegro\\Json\\JsonCoder');
         $ramlDoc = Stub::makeEmpty(
             'GoIntegro\\Raml\\RamlDoc',
             [
+                'rawRaml' => Yaml::parse(__DIR__ . self::DEFAULT_SCHEMA_RAML),
                 'schemas' => Stub::makeEmpty(
-                    'GoIntegro\\Raml\\Root\\MapCollection'
+                    'GoIntegro\\Raml\\Root\\MapCollection',
+                    ['get' => self::TEST_SCHEMA]
                 )
             ]
         );
@@ -126,22 +113,13 @@ SCHEMA;
     public function testFindingInlineBodySchema()
     {
         /* Given... (Fixture) */
-        $jsonCoder = Stub::makeEmpty(
-            'GoIntegro\Json\JsonCoder',
-            [
-                'decode' => function($filePath) {
-                    if (!is_readable($filePath)) {
-                        throw new \ErrorException("The file is not readable.");
-                    }
-
-                    return self::TEST_SCHEMA;
-                },
-                'assertJsonSchema' => function($json) { return TRUE; }
-            ]
-        );
+        $jsonCoder = Stub::makeEmpty('GoIntegro\\Json\\JsonCoder');
         $ramlDoc = Stub::makeEmpty(
             'GoIntegro\\Raml\\RamlDoc',
             [
+                'rawRaml' => Yaml::parse(
+                    __DIR__ . self::INLINE_BODY_SCHEMA_RAML
+                ),
                 'schemas' => Stub::makeEmpty(
                     'GoIntegro\\Raml\\Root\\MapCollection'
                 )
