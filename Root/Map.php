@@ -23,6 +23,10 @@ class Map implements \Countable, \IteratorAggregate
     }
 
     /**
+     * JSON schemas will be objects, resource types and traits arrays.
+     *
+     * The reason behind this is the JSON schema library, which expects a
+     * schema given to the match() method to be an instance of stdClass.
      * @param string $key
      * @param array|\stdClass $item
      * @return self
