@@ -7,3 +7,8 @@ secured:
       type: string
       example: ACCESS_TOKEN
       required: true
+paginated:
+  queryParameters:
+    pages:
+      description: The number of pages to return
+      type: number

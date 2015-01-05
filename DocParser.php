@@ -46,82 +46,62 @@ class DocParser
             }
         }
 
-        // @todo Resource types. Encapsulate.
-        foreach ($ramlDoc->getResources() as $resource) {
-            $key = '/' . $resource;
-
-            if (!empty($rawRaml[$key]['type'])) {
-                $typeName = $rawRaml[$key]['type'];
-
-                if ($ramlDoc->resourceTypes->has($typeName)) {
-                    $typeRaml = $ramlDoc->resourceTypes->get($typeName);
-                    $rawRaml[$key] = array_merge_recursive(
-                        $rawRaml[$key], $typeRaml
-                    );
-                } else {
-                    // @todo Exception.
-                }
-            }
-        }
-
-        // @todo Traits for resources. Encapsulate.
-        foreach ($ramlDoc->getResources() as $resource) {
-            $key = '/' . $resource;
-
-            if (!empty($rawRaml[$key]['is'])) {
-                foreach ($rawRaml[$key]['is'] as $traitName) {
-                    if ($ramlDoc->traits->has($traitName)) {
-                        $traitRaml = $ramlDoc->traits->get($traitName);
-                        $rawRaml[$key] = array_merge_recursive(
-                            $rawRaml[$key], $traitRaml
-                        );
-                    } else {
-                        // @todo Exception.
-                    }
-                }
-            }
-
-            // @todo Traits for methods. Encapsulate.
-            foreach (array_keys($rawRaml[$key]) as $property) {
-                if (
-                    RamlDoc::isValidMethod($property)
-                    && !empty($rawRaml[$key][$property]['is'])
-                ) {
-                    foreach ($rawRaml[$key][$property]['is'] as $traitName) {
-                        if ($ramlDoc->traits->has($traitName)) {
-                            $traitRaml = $ramlDoc->traits->get($traitName);
-
-                            $rawRaml[$key][$property] = array_merge_recursive(
-                                $rawRaml[$key][$property], $traitRaml
-                            );
-                        } else {
-                            // @todo Exception.
-                        }
-                    }
-                }
-            }
-        }
+        $ramlDoc->rawRaml = self::expand($ramlDoc, $ramlDoc->rawRaml);
 
         return $ramlDoc;
     }
 
-    /**
-     * @param array $rawRaml
-     * @return array
-     * @see http://raml.org/spec.html#resource-types-and-traits
-     */
-    protected function applyResourceTypes(array $rawRaml)
-    {
-        // @todo Recursive.
-    }
+    const ERROR_UNKNOWN_TRAIT = "The trait \"%s\" is unknown.",
+        ERROR_UNKNOWN_RESOURCE_TYPE = "The resource type \"%s\" is unknown.";
 
     /**
-     * @param array $rawRaml
-     * @return array
+     * Applies resource types and traits.
+     * @param RamlDoc $ramlDoc
+     * @param array &$item
+     * @throws \ErrorException
      * @see http://raml.org/spec.html#resource-types-and-traits
      */
-    protected function applyTraits(array $rawRaml)
+    private static function expand(
+        RamlDoc $ramlDoc, array &$item, $itemKey = NULL
+    )
     {
-        // @todo Recursive.
+        if (RamlDoc::isValidMethod($itemKey) && !empty($item['is'])) {
+            foreach ($item['is'] as $traitName) {
+                if ($ramlDoc->traits->has($traitName)) {
+                    $traitRaml = $ramlDoc->traits->get($traitName);
+                    $item = array_merge_recursive(
+                        $item, $traitRaml
+                    );
+                } else {
+                    $message = sprintf(self::ERROR_UNKNOWN_TRAIT, $traitName);
+                    throw new \ErrorException($message);
+                }
+            }
+        } elseif (RamlDoc::isResource($itemKey) && !empty($item['type'])) {
+            $typeName = $item['type'];
+
+            if ($ramlDoc->resourceTypes->has($typeName)) {
+                $typeRaml = $ramlDoc->resourceTypes->get($typeName);
+                $item = array_merge_recursive(
+                    $item, $typeRaml
+                );
+            } else {
+                $message = sprintf(
+                    self::ERROR_UNKNOWN_RESOURCE_TYPE, $typeName
+                );
+                throw new \ErrorException($message);
+            }
+        }
+
+        foreach ($item as $key => &$value) {
+            if (
+                (RamlDoc::isValidMethod($key) || RamlDoc::isResource($key))
+                && !empty($value)
+            ) {
+                $value = call_user_func(__METHOD__, $ramlDoc, $value);
+            }
+        }
+
+        return $item;
     }
 }
