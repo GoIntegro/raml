@@ -33,7 +33,7 @@ traits:
   displayName: Random resources
   get:
     description: Retrieves one or more random resources.
-    is: [paginated]
+    is: [paginated, searchable]
     responses:
       200:
   post:
@@ -53,9 +53,9 @@ traits:
       description: Deletes one or more random resources.
 /some-other-resources:
   displayName: Other random resources
+  is: [secured]
   get:
     description: Retrieves one or more random resources.
-    is: [paginated, searchable]
     responses:
       200:
   post:

@@ -9,17 +9,35 @@ namespace GoIntegro\Raml;
 
 // Mocks.
 use Codeception\Util\Stub;
+// YAML.
+use Symfony\Component\Yaml\Yaml;
 
 class DocExpanderTest extends \PHPUnit_Framework_TestCase
 {
     const RAML_PATH = '/Resources/raml/some-resources.raml';
 
-    public function testParsingRamlDoc()
+    public function testExpandingRamlDoc()
     {
         /* Given... (Fixture) */
         $ramlDoc = Stub::makeEmpty(
             'GoIntegro\\Raml\\RamlDoc',
-            ['rawRaml' => []]
+            [
+                'rawRaml' => Yaml::parse(__DIR__ . self::RAML_PATH),
+                'resourceTypes' => Stub::makeEmpty(
+                    'GoIntegro\\Raml\\Root\\MapCollection',
+                    [
+                        'has' => TRUE,
+                        'get' => function ($name) { return [$name => TRUE]; }
+                    ]
+                ),
+                'traits' => Stub::makeEmpty(
+                    'GoIntegro\\Raml\\Root\\MapCollection',
+                    [
+                        'has' => TRUE,
+                        'get' => function ($name) { return [$name => TRUE]; }
+                    ]
+                )
+            ]
         );
         $expander = new DocExpander;
         /* When... (Action) */
@@ -27,6 +45,21 @@ class DocExpanderTest extends \PHPUnit_Framework_TestCase
         /* Then... (Assertions) */
         $this->assertInstanceOf(
             'GoIntegro\\Raml\\DocExpander', $expander
+        );
+        $this->assertTrue(
+            $ramlDoc->rawRaml['/some-resources']['get']['paginated']
+        );
+        $this->assertTrue(
+            $ramlDoc->rawRaml['/some-resources']['get']['searchable']
+        );
+        $this->assertTrue(
+            $ramlDoc->rawRaml['/some-other-resources']['get']['secured']
+        );
+        $this->assertTrue(
+            $ramlDoc->rawRaml['/some-other-resources']['post']['secured']
+        );
+        $this->assertTrue(
+            $ramlDoc->rawRaml['/some-other-resources']['/{some-resources-ids}']['collection']
         );
     }
 }
