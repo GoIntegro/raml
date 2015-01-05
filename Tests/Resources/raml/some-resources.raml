@@ -25,12 +25,10 @@ resourceTypes:
               schema: <<resourcePathName>> # e.g. user
 traits:
   - !include some-traits.yml
-  - secured:
-      description: Some requests require authentication
+  - searchable:
       queryParameters:
-        <<methodName>>: # e.g. get:
-          description: A <<methodName>> name-value pair must be provided for this request to succeed.  # e.g. A get name-value...
-          example: <<methodName>>=h8duh3uhhu38   # e.g. get=h8duh3uhhu38
+        query:
+          type: string
 /some-resources:
   displayName: Random resources
   get:
@@ -53,3 +51,16 @@ traits:
         204:
     delete:
       description: Deletes one or more random resources.
+/some-other-resources:
+  displayName: Other random resources
+  get:
+    description: Retrieves one or more random resources.
+    is: [paginated, searchable]
+    responses:
+      200:
+  post:
+    description: Creates one or more random resources.
+    responses:
+      201:
+  /{some-resources-ids}:
+    type: collection

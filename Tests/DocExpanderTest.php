@@ -10,25 +10,23 @@ namespace GoIntegro\Raml;
 // Mocks.
 use Codeception\Util\Stub;
 
-class DocParserTest extends \PHPUnit_Framework_TestCase
+class DocExpanderTest extends \PHPUnit_Framework_TestCase
 {
     const RAML_PATH = '/Resources/raml/some-resources.raml';
 
     public function testParsingRamlDoc()
     {
         /* Given... (Fixture) */
-        $mapCollectionParser = Stub::makeEmpty(
-            'GoIntegro\\Raml\\MapCollectionParser'
+        $ramlDoc = Stub::makeEmpty(
+            'GoIntegro\\Raml\\RamlDoc',
+            ['rawRaml' => []]
         );
-        $docExpander = Stub::makeEmpty(
-            'GoIntegro\\Raml\\DocExpander'
-        );
-        $parser = new DocParser($mapCollectionParser, $docExpander);
+        $expander = new DocExpander;
         /* When... (Action) */
-        $ramlDoc = $parser->parse(__DIR__ . self::RAML_PATH);
+        $expander = $expander->expand($ramlDoc);
         /* Then... (Assertions) */
         $this->assertInstanceOf(
-            'GoIntegro\\Raml\\RamlDoc', $ramlDoc
+            'GoIntegro\\Raml\\DocExpander', $expander
         );
     }
 }
