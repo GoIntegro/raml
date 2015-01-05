@@ -36,8 +36,8 @@ class DocExpander
         RamlDoc $ramlDoc, array &$item, $itemKey = NULL
     )
     {
-        if (RamlDoc::isValidMethod($itemKey) && !empty($item['is'])) {
-            foreach ($item['is'] as $traitName) {
+        $applyTraits = function(&$item, array $traits) use ($ramlDoc) {
+            foreach ($traits as $traitName) {
                 if ($ramlDoc->traits->has($traitName)) {
                     $traitRaml = $ramlDoc->traits->get($traitName);
                     $item = array_merge_recursive(
@@ -48,19 +48,31 @@ class DocExpander
                     throw new \ErrorException($message);
                 }
             }
-        } elseif (RamlDoc::isResource($itemKey) && !empty($item['type'])) {
-            $typeName = $item['type'];
+        };
 
-            if ($ramlDoc->resourceTypes->has($typeName)) {
-                $typeRaml = $ramlDoc->resourceTypes->get($typeName);
-                $item = array_merge_recursive(
-                    $item, $typeRaml
-                );
-            } else {
-                $message = sprintf(
-                    self::ERROR_UNKNOWN_RESOURCE_TYPE, $typeName
-                );
-                throw new \ErrorException($message);
+        if (RamlDoc::isValidMethod($itemKey) && !empty($item['is'])) {
+            $applyTraits($item, $item['is']);
+        } elseif (RamlDoc::isResource($itemKey)) {
+            if (!empty($item['type'])) {
+                $typeName = $item['type'];
+
+                if ($ramlDoc->resourceTypes->has($typeName)) {
+                    $typeRaml = $ramlDoc->resourceTypes->get($typeName);
+                    $item = array_merge_recursive(
+                        $item, $typeRaml
+                    );
+                } else {
+                    $message = sprintf(
+                        self::ERROR_UNKNOWN_RESOURCE_TYPE, $typeName
+                    );
+                    throw new \ErrorException($message);
+                }
+            } elseif (!empty($item['is'])) {
+                foreach ($item as $key => &$value) {
+                    if (RamlDoc::isValidMethod($key)) {
+                        $applyTraits($value, $item['is']);
+                    }
+                }
             }
         }
 
