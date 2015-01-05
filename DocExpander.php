@@ -20,7 +20,7 @@ class DocExpander
      */
     public function expand(RamlDoc $ramlDoc)
     {
-        $ramlDoc->rawRaml = self::apply($ramlDoc, $ramlDoc->rawRaml);
+        $ramlDoc->rawRaml = self::applyAllToTree($ramlDoc, $ramlDoc->rawRaml);
 
         return $this;
     }
@@ -32,45 +32,23 @@ class DocExpander
      * @throws \ErrorException
      * @see http://raml.org/spec.html#resource-types-and-traits
      */
-    private static function apply(
+    private static function applyAllToTree(
         RamlDoc $ramlDoc, array &$item, $itemKey = NULL
     )
     {
-        $applyTraits = function(&$item, array $traits) use ($ramlDoc) {
-            foreach ($traits as $traitName) {
-                if ($ramlDoc->traits->has($traitName)) {
-                    $traitRaml = $ramlDoc->traits->get($traitName);
-                    $item = array_merge_recursive(
-                        $item, $traitRaml
-                    );
-                } else {
-                    $message = sprintf(self::ERROR_UNKNOWN_TRAIT, $traitName);
-                    throw new \ErrorException($message);
-                }
-            }
-        };
-
         if (RamlDoc::isValidMethod($itemKey) && !empty($item['is'])) {
-            $applyTraits($item, $item['is']);
+            $item = self::applyTraitsToNode($ramlDoc, $item, $item['is']);
         } elseif (RamlDoc::isResource($itemKey)) {
             if (!empty($item['type'])) {
-                $typeName = $item['type'];
-
-                if ($ramlDoc->resourceTypes->has($typeName)) {
-                    $typeRaml = $ramlDoc->resourceTypes->get($typeName);
-                    $item = array_merge_recursive(
-                        $item, $typeRaml
-                    );
-                } else {
-                    $message = sprintf(
-                        self::ERROR_UNKNOWN_RESOURCE_TYPE, $typeName
-                    );
-                    throw new \ErrorException($message);
-                }
+                $item = self::applyResourceTypeToNode(
+                    $ramlDoc, $item, $item['type']
+                );
             } elseif (!empty($item['is'])) {
                 foreach ($item as $key => &$value) {
                     if (RamlDoc::isValidMethod($key)) {
-                        $applyTraits($value, $item['is']);
+                        $value = self::applyTraitsToNode(
+                            $ramlDoc, $value, $item['is']
+                        );
                     }
                 }
             }
@@ -82,6 +60,58 @@ class DocExpander
                 && !empty($value)
             ) {
                 $value = call_user_func(__METHOD__, $ramlDoc, $value, $key);
+            }
+        }
+
+        return $item;
+    }
+
+    /**
+     * @param RamlDoc $ramlDoc
+     * @param array &$item
+     * @param array $traits
+     * @return array
+     * @throws \ErrorException
+     */
+    public static function applyResourceTypeToNode(
+        RamlDoc $ramlDoc, array &$item, $typeName
+    )
+    {
+        $typeName = $item['type'];
+
+        if ($ramlDoc->resourceTypes->has($typeName)) {
+            $typeRaml = $ramlDoc->resourceTypes->get($typeName);
+            $item = array_merge_recursive(
+                $item, $typeRaml
+            );
+        } else {
+            $message = sprintf(
+                self::ERROR_UNKNOWN_RESOURCE_TYPE, $typeName
+            );
+            throw new \ErrorException($message);
+        }
+
+        return $item;
+    }
+
+    /**
+     * @param RamlDoc $ramlDoc
+     * @param array &$item
+     * @param array $traits
+     * @return array
+     * @throws \ErrorException
+     */
+    private static function applyTraitsToNode(
+        RamlDoc $ramlDoc, array &$item, array $traits
+    )
+    {
+        foreach ($traits as $traitName) {
+            if ($ramlDoc->traits->has($traitName)) {
+                $traitRaml = $ramlDoc->traits->get($traitName);
+                $item = array_merge_recursive($traitRaml, $item);
+            } else {
+                $message = sprintf(self::ERROR_UNKNOWN_TRAIT, $traitName);
+                throw new \ErrorException($message);
             }
         }
 
