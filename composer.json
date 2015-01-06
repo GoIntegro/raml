@@ -24,7 +24,8 @@
         "rhumsaa/uuid": "*",
         "symfony/yaml": "*",
 
-        "gointegro/json": "dev-master"
+        "gointegro/json": "dev-master",
+        "gointegro/inflector": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "*",

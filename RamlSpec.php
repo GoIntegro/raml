@@ -26,6 +26,17 @@ class RamlSpec
     const REQUEST_BODY = 'body',
         BODY_SCHEMA = 'schema';
 
+    const PARAMETER_RESOURCE_PATH = 'resourcePath',
+        PARAMETER_RESOURCE_PATH_NAME = 'resourcePathName',
+        PARAMETER_METHOD_NAME = 'methodName';
+
+    const PROPERTY_DECLARE_RESOURCE_TYPES = 'resourceTypes',
+        PROPERTY_DECLARE_TRAITS = 'traits',
+        PROPERTY_DECLARE_SCHEMAS = 'schemas',
+        PROPERTY_APPLY_RESOURCE_TYPE = 'type',
+        PROPERTY_APPLY_TRAITS = 'is',
+        PROPERTY_USAGE = 'usage';
+
     /**
      * @var array
      */
@@ -45,5 +56,29 @@ class RamlSpec
     public static $mediaTypes = [
         self::MEDIA_TYPE_JSON,
         self::MEDIA_TYPE_XML
+    ];
+
+    /**
+     * @var array
+     */
+    public static $resourceTypeParameters = [
+        self::PARAMETER_RESOURCE_PATH,
+        self::PARAMETER_RESOURCE_PATH_NAME
+    ];
+
+    /**
+     * @var array
+     */
+    public static $traitParameters = [
+        self::PARAMETER_METHOD_NAME
+    ];
+
+    /**
+     * @var array
+     */
+    public static $rootLevelDeclarations = [
+        self::PROPERTY_DECLARE_RESOURCE_TYPES,
+        self::PROPERTY_DECLARE_TRAITS,
+        self::PROPERTY_DECLARE_SCHEMAS
     ];
 }
