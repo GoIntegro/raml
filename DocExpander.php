@@ -36,18 +36,25 @@ class DocExpander
         RamlDoc $ramlDoc, array &$item, $itemKey = NULL
     )
     {
-        if (RamlDoc::isValidMethod($itemKey) && !empty($item['is'])) {
-            $item = self::applyTraitsToNode($ramlDoc, $item, $item['is']);
+        if (
+            RamlDoc::isValidMethod($itemKey)
+            && !empty($item[RamlSpec::PROPERTY_APPLY_TRAITS])
+        ) {
+            $item = self::applyTraitsToNode(
+                $ramlDoc, $item, $item[RamlSpec::PROPERTY_APPLY_TRAITS]
+            );
         } elseif (RamlDoc::isResource($itemKey)) {
-            if (!empty($item['type'])) {
-                $item = self::applyResourceTypeToNode(
-                    $ramlDoc, $item, $item['type']
-                );
-            } elseif (!empty($item['is'])) {
+            if (!empty($item[RamlSpec::PROPERTY_APPLY_RESOURCE_TYPE])) {
+                $item = self::applyResourceTypeToNode($ramlDoc, $item);
+            }
+
+            if (!empty($item[RamlSpec::PROPERTY_APPLY_TRAITS])) {
                 foreach ($item as $key => &$value) {
                     if (RamlDoc::isValidMethod($key)) {
                         $value = self::applyTraitsToNode(
-                            $ramlDoc, $value, $item['is']
+                            $ramlDoc,
+                            $value,
+                            $item[RamlSpec::PROPERTY_APPLY_TRAITS]
                         );
                     }
                 }
@@ -69,21 +76,20 @@ class DocExpander
     /**
      * @param RamlDoc $ramlDoc
      * @param array &$item
-     * @param array $traits
      * @return array
      * @throws \ErrorException
+     * @see http://raml.org/spec.html#usage
      */
     public static function applyResourceTypeToNode(
-        RamlDoc $ramlDoc, array &$item, $typeName
+        RamlDoc $ramlDoc, array &$item
     )
     {
-        $typeName = $item['type'];
+        $typeName = $item[RamlSpec::PROPERTY_APPLY_RESOURCE_TYPE];
 
         if ($ramlDoc->resourceTypes->has($typeName)) {
             $typeRaml = $ramlDoc->resourceTypes->get($typeName);
-            $item = array_merge_recursive(
-                $item, $typeRaml
-            );
+            unset($typeRaml[RamlSpec::PROPERTY_USAGE]);
+            $item = array_merge_recursive($typeRaml, $item);
         } else {
             $message = sprintf(
                 self::ERROR_UNKNOWN_RESOURCE_TYPE, $typeName
@@ -100,6 +106,7 @@ class DocExpander
      * @param array $traits
      * @return array
      * @throws \ErrorException
+     * @see http://raml.org/spec.html#usage
      */
     private static function applyTraitsToNode(
         RamlDoc $ramlDoc, array &$item, array $traits
@@ -108,6 +115,7 @@ class DocExpander
         foreach ($traits as $traitName) {
             if ($ramlDoc->traits->has($traitName)) {
                 $traitRaml = $ramlDoc->traits->get($traitName);
+                unset($traitRaml[RamlSpec::PROPERTY_USAGE]);
                 $item = array_merge_recursive($traitRaml, $item);
             } else {
                 $message = sprintf(self::ERROR_UNKNOWN_TRAIT, $traitName);

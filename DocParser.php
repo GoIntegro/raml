@@ -45,7 +45,7 @@ class DocParser
         $rawRaml = Yaml::parse($filePath);
         $ramlDoc = new RamlDoc($rawRaml, $filePath);
 
-        foreach (['schemas', 'resourceTypes', 'traits'] as $key) {
+        foreach (RamlSpec::$rootLevelDeclarations as $key) {
             if (isset($rawRaml[$key])) {
                 $ramlDoc->$key = $this->mapCollectionParser->parse(
                     $rawRaml[$key], $ramlDoc
