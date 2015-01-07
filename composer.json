@@ -24,8 +24,8 @@
         "rhumsaa/uuid": "*",
         "symfony/yaml": "*",
 
-        "gointegro/json": "dev-master",
-        "gointegro/inflector": "dev-master"
+        "gointegro/json": "*",
+        "gointegro/inflector": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
@@ -37,7 +37,6 @@
         "psr-0": { "GoIntegro\\Raml": "" }
     },
     "target-dir": "GoIntegro/Raml",
-    "minimum-stability": "stable",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
