@@ -13,13 +13,25 @@ class RamlSnippet
      * @var string
      * @see http://raml.org/spec.html#usage
      */
-    private $usage;
+    public $usage;
     /**
      * @var array (Without the usage.)
      */
-    private $source;
+    public $source;
     /**
      * @var array
      */
-    private $parameters = [];
+    public $params;
+
+    /**
+     * @param array $source
+     * @param string $usage
+     * @param array $params
+     */
+    public function __construct(array $source, $usage = NULL, $params = [])
+    {
+        $this->source = $source;
+        $this->usage = $usage;
+        $this->params = $params;
+    }
 }
