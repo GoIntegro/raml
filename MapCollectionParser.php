@@ -25,16 +25,24 @@ class MapCollectionParser
      */
     private $jsonCoder;
     /**
+     * @var RamlSnippetParser
+     */
+    private $snippetParser;
+    /**
      * @var string
      */
     private $fileDir;
 
     /**
      * @param JsonCoder $jsonCoder
+     * @param RamlSnippetParser $snippetParser
      */
-    public function __construct(JsonCoder $jsonCoder)
+    public function __construct(
+        JsonCoder $jsonCoder, RamlSnippetParser $snippetParser
+    )
     {
         $this->jsonCoder = $jsonCoder;
+        $this->snippetParser = $snippetParser;
     }
 
     /**
@@ -62,6 +70,14 @@ class MapCollectionParser
                 $map = $this->dereferenceInclude($map, $ramlDoc->fileDir);
             } else {
                 throw new \ErrorException(self::ERROR_ROOT_SCHEMA_VALUE);
+            }
+
+            foreach ($map as &$snippet) {
+                // @todo Real typing (JSON schemata are \stdClass instances).
+                if (is_array($snippet)) {
+                    // Resource types and traits (RAML snippets) are arrays.
+                    $snippet = $this->snippetParser->parse($snippet);
+                }
             }
 
             $collection->add($map);

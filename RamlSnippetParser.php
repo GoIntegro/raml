@@ -32,13 +32,13 @@ class RamlSnippetParser
      * @param string $path
      * @return array
      */
-    private function findParams(array $raw, &$allParams = [], $path = '')
+    private function findParams(array $raw, &$allParams = [], $path = [])
     {
         foreach ($raw as $key => $value) {
-            $loopPath = $path . '.' . $key;
+            $loopPath = array_merge($path, [$key]);
 
             foreach ($this->parseParams($key) as $param) {
-                $allParams['key'][$param][] = $loopPath;
+                $allParams['key'][$param][] = $path;
             }
 
             if (is_string($value)) {

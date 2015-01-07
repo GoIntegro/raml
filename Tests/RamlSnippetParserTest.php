@@ -36,12 +36,14 @@ class RamlSnippetParserTest extends \PHPUnit_Framework_TestCase
         );
         $expected = [
             'key' => [
-                '<<methodName>>' => ['.queryParameters.<<methodName>>']
+                '<<methodName>>' => [
+                    ['queryParameters']
+                ]
             ],
             'value' => [
                 '<<methodName>>' => [
-                    '.queryParameters.<<methodName>>.description',
-                    '.queryParameters.<<methodName>>.example'
+                    ['queryParameters', '<<methodName>>', 'description'],
+                    ['queryParameters', '<<methodName>>', 'example']
                 ]
             ]
         ];
