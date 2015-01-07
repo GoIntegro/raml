@@ -34,4 +34,13 @@ class RamlSnippet
         $this->usage = $usage;
         $this->params = $params;
     }
+
+    /**
+     * @param array $node
+     * @return array
+     */
+    public function apply(array $node)
+    {
+        return array_merge_recursive($this->source, $node);
+    }
 }

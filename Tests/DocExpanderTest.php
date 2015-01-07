@@ -19,34 +19,24 @@ class DocExpanderTest extends \PHPUnit_Framework_TestCase
     public function testExpandingRamlDoc()
     {
         /* Given... (Fixture) */
+        $collection = Stub::makeEmpty(
+            'GoIntegro\\Raml\\Root\\MapCollection',
+            [
+                'has' => TRUE,
+                'get' => function ($name) {
+                    return Stub::makeEmpty(
+                        'GoIntegro\\Raml\\Root\\RamlSnippet',
+                        ['apply' => [$name => TRUE]]
+                    );
+                }
+            ]
+        );
         $ramlDoc = Stub::makeEmpty(
             'GoIntegro\\Raml\\RamlDoc',
             [
                 'rawRaml' => Yaml::parse(__DIR__ . self::RAML_PATH),
-                'resourceTypes' => Stub::makeEmpty(
-                    'GoIntegro\\Raml\\Root\\MapCollection',
-                    [
-                        'has' => TRUE,
-                        'get' => function ($name) {
-                            return Stub::makeEmpty(
-                                'GoIntegro\\Raml\\Root\\RamlSnippet',
-                                ['source' => [$name => TRUE]]
-                            );
-                        }
-                    ]
-                ),
-                'traits' => Stub::makeEmpty(
-                    'GoIntegro\\Raml\\Root\\MapCollection',
-                    [
-                        'has' => TRUE,
-                        'get' => function ($name) {
-                            return Stub::makeEmpty(
-                                'GoIntegro\\Raml\\Root\\RamlSnippet',
-                                ['source' => [$name => TRUE]]
-                            );
-                        }
-                    ]
-                )
+                'resourceTypes' => $collection,
+                'traits' => $collection
             ]
         );
         $expander = new DocExpander;
@@ -55,9 +45,6 @@ class DocExpanderTest extends \PHPUnit_Framework_TestCase
         /* Then... (Assertions) */
         $this->assertInstanceOf(
             'GoIntegro\\Raml\\DocExpander', $expander
-        );
-        $this->assertTrue(
-            $ramlDoc->rawRaml['/some-resources']['get']['paginated']
         );
         $this->assertTrue(
             $ramlDoc->rawRaml['/some-resources']['get']['searchable']
