@@ -14,19 +14,13 @@ use Symfony\Component\Yaml\Yaml;
 
 class RamlSnippetParserTest extends \PHPUnit_Framework_TestCase
 {
+    const RAML_PATH = '/Resources/raml/snippets.raml';
+
     public function testParsingRamlSnippet()
     {
         /* Given... (Fixture) */
-        $rawSnippet = [
-            'usage' => "Apply this to any method that needs to be secured",
-            'description' => "Some requests require authentication",
-            'queryParameters' => [
-                '<<methodName>>' => [
-                    'description' => "A <<methodName>> name-value pair must be provided for this request to succeed.",
-                    'example' => "<<methodName>>=h8duh3uhhu38"
-                ]
-            ]
-        ];
+        $raml = Yaml::parse(__DIR__ . self::RAML_PATH);
+        $rawSnippet = $raml['resourceTypes'][0]['searchableCollection'];
         $parser = new RamlSnippetParser;
         /* When... (Action) */
         $ramlSnippet = $parser->parse($rawSnippet);
@@ -36,14 +30,35 @@ class RamlSnippetParserTest extends \PHPUnit_Framework_TestCase
         );
         $expected = [
             'key' => [
-                '<<methodName>>' => [
-                    ['queryParameters']
+                '<<queryParamName>>' => [
+                    ['get', 'queryParameters']
+                ],
+                '<<fallbackParamName>>' => [
+                    ['get', 'queryParameters']
                 ]
             ],
             'value' => [
-                '<<methodName>>' => [
-                    ['queryParameters', '<<methodName>>', 'description'],
-                    ['queryParameters', '<<methodName>>', 'example']
+                '<<queryParamName>>' => [
+                    [
+                        'get', 'queryParameters',
+                        '<<queryParamName>>', 'description'
+                    ],
+                    [
+                        'get', 'queryParameters',
+                        '<<fallbackParamName>>', 'description'
+                    ]
+                ],
+                '<<fallbackParamName>>' => [
+                    [
+                        'get', 'queryParameters',
+                        '<<fallbackParamName>>', 'description'
+                    ]
+                ],
+                '<<resourcePathName>>' => [
+                    [
+                        'get', 'queryParameters',
+                        '<<queryParamName>>', 'description'
+                    ]
                 ]
             ]
         ];

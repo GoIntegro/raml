@@ -14,13 +14,54 @@ use Symfony\Component\Yaml\Yaml;
 
 class RamlSnippetTest extends \PHPUnit_Framework_TestCase
 {
+    const RAML_PATH = '/../Resources/raml/snippets.raml';
+
     public function testApplyingSnippet()
     {
         /* Given... (Fixture) */
-        $snippet = new RamlSnippet([], "", []);
+        $raml = Yaml::parse(__DIR__ . self::RAML_PATH);
+        $node = $raml['/books'];
+        $params = [
+            'key' => [
+                '<<methodName>>' => [
+                    ['queryParameters']
+                ]
+            ],
+            'value' => [
+                '<<methodName>>' => [
+                    ['queryParameters', '<<methodName>>', 'description'],
+                    ['queryParameters', '<<methodName>>', 'example']
+                ]
+            ]
+        ];
+        $snippet = $raml['resourceTypes'][0]['searchableCollection'];
+        $snippet = new RamlSnippet($snippet, "Meh.", $params);
         /* When... (Action) */
-        $node = $snippet->apply([]);
+        $actual = $snippet->apply($node);
+        $expected = [
+            'get' => [
+                'queryParameters' => [
+                    '<<queryParamName>>' => [
+                        'description' => "Return <<resourcePathName>> that have their <<queryParamName>> matching the given value"
+                    ],
+                    '<<fallbackParamName>>' => [
+                        'description' => "If no values match the value given for <<queryParamName>>, use <<fallbackParamName>> instead"
+                    ]
+                ],
+                'is' => [[
+                    'secured' => ['tokenName' => 'access_token']
+                ], [
+                    'paged' => ['maxPages' => 10]
+                ]]
+            ],
+            'type' => [
+                'searchableCollection' => [
+                    'queryParamName' => 'title',
+                    'fallbackParamName' => 'digest_all_fields'
+                ]
+            ]
+        ];
         /* Then... (Assertions) */
-        $this->assertEquals([], $node);
+        $this->assertEquals($expected, $actual);
     }
 }
