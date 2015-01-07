@@ -27,14 +27,24 @@ class DocExpanderTest extends \PHPUnit_Framework_TestCase
                     'GoIntegro\\Raml\\Root\\MapCollection',
                     [
                         'has' => TRUE,
-                        'get' => function ($name) { return [$name => TRUE]; }
+                        'get' => function ($name) {
+                            return Stub::makeEmpty(
+                                'GoIntegro\\Raml\\Root\\RamlSnippet',
+                                ['source' => [$name => TRUE]]
+                            );
+                        }
                     ]
                 ),
                 'traits' => Stub::makeEmpty(
                     'GoIntegro\\Raml\\Root\\MapCollection',
                     [
                         'has' => TRUE,
-                        'get' => function ($name) { return [$name => TRUE]; }
+                        'get' => function ($name) {
+                            return Stub::makeEmpty(
+                                'GoIntegro\\Raml\\Root\\RamlSnippet',
+                                ['source' => [$name => TRUE]]
+                            );
+                        }
                     ]
                 )
             ]

@@ -88,8 +88,7 @@ class DocExpander
 
         if ($ramlDoc->resourceTypes->has($typeName)) {
             $typeRaml = $ramlDoc->resourceTypes->get($typeName);
-            unset($typeRaml[RamlSpec::PROPERTY_USAGE]);
-            $item = array_merge_recursive($typeRaml, $item);
+            $item = array_merge_recursive($typeRaml->source, $item);
         } else {
             $message = sprintf(
                 self::ERROR_UNKNOWN_RESOURCE_TYPE, $typeName
@@ -115,8 +114,7 @@ class DocExpander
         foreach ($traits as $traitName) {
             if ($ramlDoc->traits->has($traitName)) {
                 $traitRaml = $ramlDoc->traits->get($traitName);
-                unset($traitRaml[RamlSpec::PROPERTY_USAGE]);
-                $item = array_merge_recursive($traitRaml, $item);
+                $item = array_merge_recursive($traitRaml->source, $item);
             } else {
                 $message = sprintf(self::ERROR_UNKNOWN_TRAIT, $traitName);
                 throw new \ErrorException($message);
