@@ -28,19 +28,25 @@ class RamlSnippetParser
 
     /**
      * @param array $raw
+     * @param array &$allParams
+     * @param string $path
      * @return array
      */
-    private function findParams(array $raw, &$params = [], $path = '')
+    private function findParams(array $raw, &$allParams = [], $path = '')
     {
         foreach ($raw as $key => $value) {
             $loopPath = $path . '.' . $key;
-            $params['key'][$loopPath] = $this->parseParams($key);
-            /* Variable. */ $le = $params; if (!isset($lb)) $lb = false; $lp = 'file:///tmp/skqr.log'; if (!isset($_ENV[$lp])) $_ENV[$lp] = 0; $le = var_export($le, true); error_log(sprintf("%s/**\n * %s\n * %s\n * %s\n */\n\$params = %s;\n\n", $lb ? '' : str_repeat('=', 14) . ' ' . ++$_ENV[$lp] . gmdate(' r ') . str_repeat('=', 14) . "\n", microtime(true), basename(__FILE__) . ':' . __LINE__, __METHOD__ ? __METHOD__ . '()' : '', $le), 3, $lp); if (!$lb) $lb = true; // Javier Lorenzana <javier.lorenzana@gointegro.com>
+
+            foreach ($this->parseParams($key) as $param) {
+                $allParams['key'][$param][] = $loopPath;
+            }
 
             if (is_string($value)) {
-                $params['value'][$loopPath] = $this->parseParams($key);
+                foreach ($this->parseParams($value) as $param) {
+                    $allParams['value'][$param][] = $loopPath;
+                }
             } elseif (is_array($value)) {
-                $this->findParams($value, $params, $loopPath);
+                $this->findParams($value, $allParams, $loopPath);
             }
         }
     }

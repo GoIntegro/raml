@@ -35,8 +35,15 @@ class RamlSnippetParserTest extends \PHPUnit_Framework_TestCase
             'GoIntegro\\Raml\\Root\\RamlSnippet', $ramlSnippet
         );
         $expected = [
-            'key' => [],
-            'value' => []
+            'key' => [
+                '<<methodName>>' => ['.queryParameters.<<methodName>>']
+            ],
+            'value' => [
+                '<<methodName>>' => [
+                    '.queryParameters.<<methodName>>.description',
+                    '.queryParameters.<<methodName>>.example'
+                ]
+            ]
         ];
         $this->assertEquals($expected, $ramlSnippet->params);
     }
