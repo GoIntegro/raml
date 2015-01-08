@@ -47,22 +47,27 @@ class ResourceType
         if (empty($node['type'])) {
             $message = "No resource type is defined.";
             throw new \ErrorException($message);
-        } elseif (is_string($node['type'])) {
+        } elseif (is_string($node['type'] && $node['type'] === $this->name)) {
             $copy = $this->source;
         } elseif (
             is_array($node['type'])
             && isset($node['type'][$this->name])
         ) {
-            $params = array_flip($node['type'][$this->name]);
-            $callback = function($param) { return '<<' . $param . '>>'; };
-            $params = array_map($callback, $params);
-            $params = array_flip($params);
+            $params = $node['type'][$this->name];
+            $params = $this->prepareParams($params);
             $params = $this->addNodeParams($params, $type);
             $copy = $this->copy($this->source, $params);
+        } else {
+            $message = "The resource type declaration is neither a string nor a map.";
+            throw new \ErrorException($message);
         }
 
+        if (is_null($copy)) {
+            $message = "This resource type is not applied to the given node.";
+            throw new \ErrorException($message);
+        }
 
-        return array_merge_recursive($this->source, $node);
+        return array_merge_recursive($copy, $node);
     }
 
     /**
@@ -125,6 +130,21 @@ class ResourceType
         );
 
         return $subject;
+    }
+
+    /**
+     * @param array $params
+     * @param string $type
+     * @return array
+     */
+    private function prepareParams(array $params)
+    {
+        $params = array_flip($params);
+        $callback = function($param) { return '<<' . $param . '>>'; };
+        $params = array_map($callback, $params);
+        $params = array_flip($params);
+
+        return $params;
     }
 
     /**

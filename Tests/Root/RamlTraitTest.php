@@ -20,7 +20,7 @@ class RamlTraitTest extends \PHPUnit_Framework_TestCase
     {
         /* Given... (Fixture) */
         $raml = Yaml::parse(__DIR__ . self::RAML_PATH);
-        $node = $raml['/books'];
+        $node = $raml['/books']['get'];
         $params = [
             'key' => [
                 '<<methodName>>' => [
@@ -34,12 +34,13 @@ class RamlTraitTest extends \PHPUnit_Framework_TestCase
                 ]
             ]
         ];
-        $snippet = $raml['resourceTypes'][0]['searchableCollection'];
-        $snippet = new ResourceType(
-            'searchableCollection', $snippet, "Meh.", $params
-        );
+        $secured = $raml['traits'][0]['secured'];
+        $secured = new RamlTrait('secured', $secured);
+        $paginated = $raml['traits'][0]['secured'];
+        $paginated = new RamlTrait('paginated', $paginated);
         /* When... (Action) */
-        $actual = $snippet->apply('/books', $node);
+        $actual = $secured->apply('get', $node);
+        $actual = $paginated->apply('get', $actual);
         $expected = [
             'get' => [
                 'queryParameters' => [

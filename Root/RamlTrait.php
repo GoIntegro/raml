@@ -22,28 +22,17 @@ class RamlTrait
      * @see http://raml.org/spec.html#usage
      */
     public $usage;
-    /**
-     * @var array
-     */
-    public $params;
 
     /**
      * @param string $name
      * @param array $source
-     * @param string $usage
-     * @param array $params
      */
-    public function __construct(
-        $name,
-        array $source,
-        $usage = NULL,
-        $params = []
-    )
+    public function __construct($name, array $source)
     {
         $this->name = $name;
+        $this->usage = !empty($source['usage']) ? $source['usage'] : NULL;
+        unset($source['usage']);
         $this->source = $source;
-        $this->usage = $usage;
-        $this->params = $params;
     }
 
     /**
@@ -55,29 +44,35 @@ class RamlTrait
     {
         $copy = NULL;
 
-        if (empty($node['type'])) {
-            $message = "No resource type is defined.";
+        if (empty($node['is'])) {
+            $message = "No traits are defined.";
             throw new \ErrorException($message);
-        } elseif (is_string($node['type'])) {
-            $copy = $this->source;
-        } elseif (
-            is_array($node['type'])
-            && isset($node['type'][$this->name])
-        ) {
-            $params = array_flip($node['type'][$this->name]);
-            $callback = function($param) { return '<<' . $param . '>>'; };
-            $params = array_map($callback, $params);
-            $params = array_flip($params);
-            $params['<<resourcePath>>'] = $type;
-            $params['<<resourcePathName>>'] = substr($type, 1);
-            /* Variable. */ $le = $params; if (!isset($lb)) $lb = false; $lp = 'file:///tmp/skqr.log'; if (!isset($_ENV[$lp])) $_ENV[$lp] = 0; $le = var_export($le, true); error_log(sprintf("%s/**\n * %s\n * %s\n * %s\n */\n\$params = %s;\n\n", $lb ? '' : str_repeat('=', 14) . ' ' . ++$_ENV[$lp] . gmdate(' r ') . str_repeat('=', 14) . "\n", microtime(true), basename(__FILE__) . ':' . __LINE__, __METHOD__ ? __METHOD__ . '()' : '', $le), 3, $lp); if (!$lb) $lb = true; // Javier Lorenzana <javier.lorenzana@gointegro.com>
-            /* Variable. */ $le = $this->source; if (!isset($lb)) $lb = false; $lp = 'file:///tmp/skqr.log'; if (!isset($_ENV[$lp])) $_ENV[$lp] = 0; $le = var_export($le, true); error_log(sprintf("%s/**\n * %s\n * %s\n * %s\n */\n\$this->source = %s;\n\n", $lb ? '' : str_repeat('=', 14) . ' ' . ++$_ENV[$lp] . gmdate(' r ') . str_repeat('=', 14) . "\n", microtime(true), basename(__FILE__) . ':' . __LINE__, __METHOD__ ? __METHOD__ . '()' : '', $le), 3, $lp); if (!$lb) $lb = true; // Javier Lorenzana <javier.lorenzana@gointegro.com>
-            $copy = $this->copy($this->source, $params);
-            /* Variable. */ $le = $copy; if (!isset($lb)) $lb = false; $lp = 'file:///tmp/skqr.log'; if (!isset($_ENV[$lp])) $_ENV[$lp] = 0; $le = var_export($le, true); error_log(sprintf("%s/**\n * %s\n * %s\n * %s\n */\n\$copy = %s;\n\n", $lb ? '' : str_repeat('=', 14) . ' ' . ++$_ENV[$lp] . gmdate(' r ') . str_repeat('=', 14) . "\n", microtime(true), basename(__FILE__) . ':' . __LINE__, __METHOD__ ? __METHOD__ . '()' : '', $le), 3, $lp); if (!$lb) $lb = true; // Javier Lorenzana <javier.lorenzana@gointegro.com>
+        } elseif (is_array($node['is'])) {
+            foreach ($node['is'] as $trait) {
+                if (is_string($trait) && $trait === $this->name) {
+                    $copy = $this->source;
+                    break;
+                } elseif (is_array($trait)) {
+                    if (isset($trait[$this->name])) {
+                        $params = $trait[$this->name];
+                        $params = $this->prepareParams($params);
+                        $params = $this->addNodeParams($params, $type);
+                        $copy = $this->copy($this->source, $params);
+                        break;
+                    }
+                } else {
+                    $message = "A trait declaration is neither a string nor a map.";
+                    throw new \ErrorException($message);
+                }
+            }
         }
 
+        if (is_null($copy)) {
+            $message = "This trait is not applied to the given node.";
+            throw new \ErrorException($message);
+        }
 
-        return array_merge_recursive($this->source, $node);
+        return array_merge_recursive($copy, $node);
     }
 
     /**
@@ -140,5 +135,33 @@ class RamlTrait
         );
 
         return $subject;
+    }
+
+    /**
+     * @param array $params
+     * @param string $type
+     * @return array
+     */
+    private function prepareParams(array $params)
+    {
+        $params = array_flip($params);
+        $callback = function($param) { return '<<' . $param . '>>'; };
+        $params = array_map($callback, $params);
+        $params = array_flip($params);
+
+        return $params;
+    }
+
+    /**
+     * @param array $params
+     * @param string $type
+     * @return array
+     */
+    private function addNodeParams(array $params, $type)
+    {
+        $params['<<resourcePath>>'] = $type;
+        $params['<<resourcePathName>>'] = substr($type, 1);
+
+        return $params;
     }
 }
