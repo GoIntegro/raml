@@ -16,17 +16,17 @@ class RamlSnippetParserTest extends \PHPUnit_Framework_TestCase
 {
     const RAML_PATH = '/Resources/raml/snippets.raml';
 
-    public function testParsingRamlSnippet()
+    public function testParsingResourceType()
     {
         /* Given... (Fixture) */
         $raml = Yaml::parse(__DIR__ . self::RAML_PATH);
         $rawSnippet = $raml['resourceTypes'][0]['searchableCollection'];
         $parser = new RamlSnippetParser;
         /* When... (Action) */
-        $ramlSnippet = $parser->parse($rawSnippet);
+        $ramlSnippet = $parser->parse('searchableCollection', $rawSnippet);
         /* Then... (Assertions) */
         $this->assertInstanceOf(
-            'GoIntegro\\Raml\\Root\\RamlSnippet', $ramlSnippet
+            'GoIntegro\\Raml\\Root\\ResourceType', $ramlSnippet
         );
         $expected = [
             'key' => [

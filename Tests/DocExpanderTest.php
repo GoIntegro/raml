@@ -25,7 +25,7 @@ class DocExpanderTest extends \PHPUnit_Framework_TestCase
                 'has' => TRUE,
                 'get' => function ($name) {
                     return Stub::makeEmpty(
-                        'GoIntegro\\Raml\\Root\\RamlSnippet',
+                        'GoIntegro\\Raml\\Root\\ResourceType',
                         ['apply' => [$name => TRUE]]
                     );
                 }

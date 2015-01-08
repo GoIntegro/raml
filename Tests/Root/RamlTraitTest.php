@@ -12,7 +12,7 @@ use Codeception\Util\Stub;
 // YAML.
 use Symfony\Component\Yaml\Yaml;
 
-class RamlSnippetTest extends \PHPUnit_Framework_TestCase
+class RamlTraitTest extends \PHPUnit_Framework_TestCase
 {
     const RAML_PATH = '/../Resources/raml/snippets.raml';
 
@@ -35,9 +35,11 @@ class RamlSnippetTest extends \PHPUnit_Framework_TestCase
             ]
         ];
         $snippet = $raml['resourceTypes'][0]['searchableCollection'];
-        $snippet = new RamlSnippet($snippet, "Meh.", $params);
+        $snippet = new ResourceType(
+            'searchableCollection', $snippet, "Meh.", $params
+        );
         /* When... (Action) */
-        $actual = $snippet->apply($node);
+        $actual = $snippet->apply('/books', $node);
         $expected = [
             'get' => [
                 'queryParameters' => [

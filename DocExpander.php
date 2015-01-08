@@ -88,7 +88,7 @@ class DocExpander
 
         if ($ramlDoc->resourceTypes->has($typeName)) {
             $typeRaml = $ramlDoc->resourceTypes->get($typeName);
-            $item = $typeRaml->apply($item);
+            $item = $typeRaml->apply('/replace', $item);
         } else {
             $message = sprintf(
                 self::ERROR_UNKNOWN_RESOURCE_TYPE, $typeName
@@ -114,7 +114,7 @@ class DocExpander
         foreach ($traits as $traitName) {
             if ($ramlDoc->traits->has($traitName)) {
                 $traitRaml = $ramlDoc->traits->get($traitName);
-                $item = $traitRaml->apply($item);
+                $item = $traitRaml->apply('/replace', $item);
             } else {
                 $message = sprintf(self::ERROR_UNKNOWN_TRAIT, $traitName);
                 throw new \ErrorException($message);

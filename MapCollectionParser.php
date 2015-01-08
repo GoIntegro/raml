@@ -72,11 +72,11 @@ class MapCollectionParser
                 throw new \ErrorException(self::ERROR_ROOT_SCHEMA_VALUE);
             }
 
-            foreach ($map as &$snippet) {
+            foreach ($map as $name => &$snippet) {
                 // @todo Real typing (JSON schemata are \stdClass instances).
                 if (is_array($snippet)) {
                     // Resource types and traits (RAML snippets) are arrays.
-                    $snippet = $this->snippetParser->parse($snippet);
+                    $snippet = $this->snippetParser->parse($name, $snippet);
                 }
             }
 

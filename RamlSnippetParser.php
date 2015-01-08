@@ -9,22 +9,23 @@ namespace GoIntegro\Raml;
 
 class RamlSnippetParser
 {
+    const PARAM_REGEX = '/<<([a-z][a-zA-Z0-9]*)>>/';
+
     /**
+     * @param string $name
      * @param mixed $raw
-     * @return Root\RamlSnippet
+     * @return Root\ResourceType
      * @throws \ErrorException
      */
-    public function parse(array $raw)
+    public function parse($name, array $raw)
     {
         $usage = isset($raw['usage']) ? $raw['usage'] : '';
         unset($raw['usage']);
         $params = [];
         $this->findParams($raw, $params);
 
-        return new Root\RamlSnippet($raw, $usage, $params);
+        return new Root\ResourceType($name, $raw, $usage, $params);
     }
-
-    const PARAM_REGEX = '/<<([a-z][a-zA-Z0-9]*)>>/';
 
     /**
      * @param array $raw
