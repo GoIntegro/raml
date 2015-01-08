@@ -35,14 +35,10 @@ class MapCollectionParser
 
     /**
      * @param JsonCoder $jsonCoder
-     * @param RamlSnippetParser $snippetParser
      */
-    public function __construct(
-        JsonCoder $jsonCoder, RamlSnippetParser $snippetParser
-    )
+    public function __construct(JsonCoder $jsonCoder)
     {
         $this->jsonCoder = $jsonCoder;
-        $this->snippetParser = $snippetParser;
     }
 
     /**
@@ -76,7 +72,7 @@ class MapCollectionParser
                 // @todo Real typing (JSON schemata are \stdClass instances).
                 if (is_array($snippet)) {
                     // Resource types and traits (RAML snippets) are arrays.
-                    $snippet = $this->snippetParser->parse($name, $snippet);
+                    $snippet = new Root\ResourceType($name, $snippet);
                 }
             }
 

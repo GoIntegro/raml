@@ -20,7 +20,6 @@ class MapCollectionParserTest extends \PHPUnit_Framework_TestCase
     {
         /* Given... (Fixture) */
         $jsonCoder = Stub::makeEmpty('GoIntegro\\Json\\JsonCoder');
-        $snippetParser = Stub::makeEmpty('GoIntegro\\Raml\\RamlSnippetParser');
         $path = __DIR__ . self::RAML_PATH;
         $ramlDoc = Stub::makeEmpty(
             'GoIntegro\\Raml\\RamlDoc',
@@ -44,7 +43,7 @@ class MapCollectionParserTest extends \PHPUnit_Framework_TestCase
                 ]
             ]
         ];
-        $parser = new MapCollectionParser($jsonCoder, $snippetParser);
+        $parser = new MapCollectionParser($jsonCoder);
         /* When... (Action) */
         $mapCollection = $parser->parse($raw, $ramlDoc);
         /* Then... (Assertions) */
