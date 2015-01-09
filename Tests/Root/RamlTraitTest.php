@@ -36,33 +36,25 @@ class RamlTraitTest extends \PHPUnit_Framework_TestCase
         ];
         $secured = $raml['traits'][0]['secured'];
         $secured = new RamlTrait('secured', $secured);
-        $paginated = $raml['traits'][0]['secured'];
+        $paginated = $raml['traits'][0]['paginated'];
         $paginated = new RamlTrait('paginated', $paginated);
         /* When... (Action) */
         $actual = $secured->apply('get', $node);
         $actual = $paginated->apply('get', $actual);
         $expected = [
-            'get' => [
-                'queryParameters' => [
-                    '<<queryParamName>>' => [
-                        'description' => "Return <<resourcePathName>> that have their <<queryParamName>> matching the given value"
-                    ],
-                    '<<fallbackParamName>>' => [
-                        'description' => "If no values match the value given for <<queryParamName>>, use <<fallbackParamName>> instead"
-                    ]
+            'queryParameters' => [
+                'access_token' => [
+                    'description' => 'A valid access_token is required'
                 ],
-                'is' => [[
-                    'secured' => ['tokenName' => 'access_token']
-                ], [
-                    'paged' => ['maxPages' => 10]
-                ]]
-            ],
-            'type' => [
-                'searchableCollection' => [
-                    'queryParamName' => 'title',
-                    'fallbackParamName' => 'digest_all_fields'
+                'numPages' => [
+                    'description' => 'The number of pages to return, not to exceed 10'
                 ]
-            ]
+            ],
+            'is' => [[
+                'secured' => ['tokenName' => 'access_token']
+            ], [
+                'paginated' => ['maxPages' => 10]
+            ]]
         ];
         /* Then... (Assertions) */
         $this->assertEquals($expected, $actual);
