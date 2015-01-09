@@ -48,7 +48,7 @@ class DocParser
         foreach (RamlSpec::$rootLevelDeclarations as $key) {
             if (isset($rawRaml[$key])) {
                 $ramlDoc->$key = $this->mapCollectionParser->parse(
-                    $rawRaml[$key], $ramlDoc
+                    $key, $rawRaml[$key], $ramlDoc
                 );
             }
         }

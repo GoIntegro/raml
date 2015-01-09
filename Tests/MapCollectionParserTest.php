@@ -45,7 +45,7 @@ class MapCollectionParserTest extends \PHPUnit_Framework_TestCase
         ];
         $parser = new MapCollectionParser($jsonCoder);
         /* When... (Action) */
-        $mapCollection = $parser->parse($raw, $ramlDoc);
+        $mapCollection = $parser->parse('traits', $raw, $ramlDoc);
         /* Then... (Assertions) */
         $this->assertInstanceOf(
             'GoIntegro\\Raml\\Root\\MapCollection', $mapCollection

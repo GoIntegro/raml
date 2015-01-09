@@ -25,10 +25,6 @@ class MapCollectionParser
      */
     private $jsonCoder;
     /**
-     * @var RamlSnippetParser
-     */
-    private $snippetParser;
-    /**
      * @var string
      */
     private $fileDir;
@@ -47,7 +43,7 @@ class MapCollectionParser
      * @return self
      * @throws \ErrorException
      */
-    public function parse($raw, RamlDoc $ramlDoc)
+    public function parse($key, $raw, RamlDoc $ramlDoc)
     {
         $collection = new Root\MapCollection;
 
@@ -68,11 +64,13 @@ class MapCollectionParser
                 throw new \ErrorException(self::ERROR_ROOT_SCHEMA_VALUE);
             }
 
-            foreach ($map as $name => &$snippet) {
-                // @todo Real typing (JSON schemata are \stdClass instances).
-                if (is_array($snippet)) {
-                    // Resource types and traits (RAML snippets) are arrays.
+            if (RamlSpec::PROPERTY_DECLARE_RESOURCE_TYPES == $key) {
+                foreach ($map as $name => &$snippet) {
                     $snippet = new Root\ResourceType($name, $snippet);
+                }
+            } elseif (RamlSpec::PROPERTY_DECLARE_TRAITS == $key) {
+                foreach ($map as $name => &$snippet) {
+                    $snippet = new Root\RamlTrait($name, $snippet);
                 }
             }
 
