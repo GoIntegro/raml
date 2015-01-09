@@ -37,7 +37,6 @@
         "psr-0": { "GoIntegro\\Raml": "" }
     },
     "target-dir": "GoIntegro/Raml",
-    "prefer-stable": true,
     "extra": {
         "branch-alias": {
             "dev-master": "0.9.x-dev"
