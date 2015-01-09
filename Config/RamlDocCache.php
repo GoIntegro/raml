@@ -5,7 +5,7 @@
  * @author Javier Lorenzana <javier.lorenzana@gointegro.com>
  */
 
-namespace GoIntegro\Hateoas\Config;
+namespace GoIntegro\Raml\Config;
 
 // RAML.
 use GoIntegro\Raml\RamlDoc;
