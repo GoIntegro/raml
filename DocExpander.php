@@ -66,7 +66,7 @@ class DocExpander
                 (RamlDoc::isValidMethod($key) || RamlDoc::isResource($key))
                 && !empty($value)
             ) {
-                $value = call_user_func(__METHOD__, $ramlDoc, $value, $key);
+                $value = self::applyAllToTree($ramlDoc, $value, $key);
             }
         }
 
