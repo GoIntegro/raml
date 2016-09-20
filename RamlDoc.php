@@ -103,7 +103,7 @@ class RamlDoc
     {
         $raml = $this->getPathDefinition($path);
 
-        return isset($raml[$method]);
+        return array_key_exists($method, $raml);
     }
 
     /**
