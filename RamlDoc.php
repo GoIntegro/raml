@@ -134,7 +134,7 @@ class RamlDoc
 
         foreach (explode('/', substr($path, 1)) as $part) {
             $resource = '/' . $part;
-            $fullResource = '/' . strrchr($path, $part);
+            $fullResource = '/' . strstr($path, $part);
 
             if (isset($raml[$resource])) {
                 $raml = $raml[$resource];
