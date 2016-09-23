@@ -134,9 +134,12 @@ class RamlDoc
 
         foreach (explode('/', substr($path, 1)) as $part) {
             $resource = '/' . $part;
+            $fullResource = '/' . strrchr($path, $part);
 
             if (isset($raml[$resource])) {
                 $raml = $raml[$resource];
+            } else if (isset($raml[$fullResource])) {
+                $raml = $raml[$fullResource];
             } else {
                 foreach (array_keys($raml) as $key) {
                     if (static::isParameter($key)) {
